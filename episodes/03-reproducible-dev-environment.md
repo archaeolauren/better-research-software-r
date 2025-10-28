@@ -7,13 +7,13 @@ exercises: 0
 :::::::::::::::::::::::::::::::::::::: questions
 
 - What are virtual environments in software development and why use them?
-- How can we manage Python virtual coding environments and external (third-party) libraries on our machines?
+- How can we best manage our project's dependencies (required third-party packages)
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Set up a Python virtual coding environment for a software project using `venv` and `pip`.
+- Set up a virtual coding environment for an R project using `renv`.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -24,6 +24,7 @@ to enable others to see and contribute to it. We now want to start developing th
 
 ### Code state
 
+<!-- TODO: This reference must be updated to R-version of project: #20 -->
 At this point, the code in your local software project's directory should be as in:
 <https://github.com/carpentries-incubator/bbrs-software-project/tree/03-reproducible-dev-environment>
 
@@ -31,23 +32,43 @@ At this point, the code in your local software project's directory should be as 
 
 ::: instructor
 
-Some learners may encounter various issues when creating and managing virtual development environments or configuring the Python interpreter path, depending on their specific system setup.
+Some learners may encounter issues when installing packages or trying to restore recorded environments. To assist with troubleshooting during workshops, we have compiled a list of common issues that instructors have observed in the past.
 
-To assist with troubleshooting during workshops, we have compiled a list of common issues that instructors have observed in the past.
+General recommendations for troubleshooting package installation issues:
 
-- learners sometimes forget to activate the virtual environment - instructors should remind the learners about this at the start of each episode and also check for this during episodes, e.g. each time a new command line terminal window is started.
-- adding a Python installation to the beginning of the environment variable PATH, causes it to override Python from the virtual environment - always check for this with `which python3` and `python3 --version`.
-- some learners have other environment variables set that can influence the Python interpreter and modules being loaded and used - e.g. `PYTHONHOME` (changes the location of the standard Python libraries), `PYTHONPATH` (augments the default search path for Python module files) or `PYTHONSTARTUP` (points to a Python script that is run before starting Python interactive mode for various enhancements like preloading modules, setting colors, etc.). Make sure they are unset before activating the environment, e.g. with:
+- Try using `install.packages('some.pkg', dependencies = TRUE)`
 
-```bash
-$ unset PYTHONHOME PYTHONPATH PYTHONSTARTUP
-$ python3 -m venv ./venv_spacewalks
-```
+- [pak](https://github.com/r-lib/pak) often does a better job of figuring out and installing (system) dependencies:
+  ```R
+  install.packages('pak')
+  pak::pkg_deps_tree('some.pkg')
+  pak::pkg_sysreqs('some.pkg')
+  ```
+  You can also tell `renv` to use `pak` as package manager: `Sys.setenv(RENV_CONFIG_PAK_ENABLED=TRUE)`
+
+- Use `.libPaths()` and verify that it includes at least one folder to which the user has write permisisons.
+  If that’s not the case, try setting `Sys.setenv(R_LIBS_USER="some/writable/path")`. You can make this permanent by placing a `R_LIBS_USER="the/path"` line in `file.edit(path.expand("~/.Renviron"))`.
+
+General recommendations on using `renv` (some of these might be moved to the course materials):
+
+- `snapshot.type='explicit'`: important in the context of a package, or to use a hand-curated list of "looser" dependencies (i.e. using a DESCRIPTION file). It can improve cross-platform / cross-version compatibility issues.
+
+- `r.version`: by default `renv` will use and record the host's R version in the lock file. In the context of a collaborative project this is problematic, because everyone's `renv.lock` file might look different. Agree on a shared `renv::settings$r.version`, or use explicit dependencies (and don't commit the lock file)
+
+- Make sure to use `renv::init(bioconductor=TRUE)` if using any packges from Bioconductor.
+
 
 If you run into problems not mentioned here, please open an [issue in the lesson repository](https://github.com/carpentries-incubator/better-research-software/issues/) so we can track them and update the lesson material accordingly.
 
 :::
 
+<!--This is as far as I got
+
+Slides on working with renv that might be used as a starting point:
+https://github.com/UoMResearchIT/RRCSF/blob/main/notes/R_on_CSF.qmd
+https://uomresearchit.github.io/RRCSF/notes/R_on_CSF.html#/reproduce-your-environment-r-version 
+
+-->
 ## Software dependencies
 
 If we have a look at our script, we may notice a few `import` lines such as: `import json`, `import csv`, 
