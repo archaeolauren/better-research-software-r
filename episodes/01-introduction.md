@@ -22,7 +22,7 @@ exercises: 10
 Software is [fundamental to modern research][ssi-survey-2014] - some of it would even be impossible without software.
 From short, thrown-together temporary scripts written to help with day-to-day research tasks, through an abundance of complex data analysis spreadsheets, to the hundreds of software engineers and millions of lines of code behind international efforts such as the Large Hadron Collider, there are few areas of research where software does not have a fundamental role.
 
-This course teaches good practices and reproducible working methods that are agnostic of a programming language (although we will use Python code in our examples).
+This course teaches good practices and reproducible working methods that are agnostic of a programming language (although we will use R code in our examples).
 It aims to provide researchers with the tools and knowledge to feel confident when writing **good quality and sustainable software** to support their research.
 Although the discussion will often focus on software developed in the context of research, most of the good practices introduced here are beneficial to software development more generally.
 
@@ -99,44 +99,17 @@ You were emailed some spacewalks data and analysis code bundled in the `spacewal
 member who worked on similar things but has since left. You need to be able to install and run this code on your 
 machine, check you can understand it and then adapt it to your own project.
 
-As part of the [setup for this course](./installation-instructions.html#spacewalks), you may have downloaded or been emailed the `spacewalks.zip` archive. 
-If not, you can [download it](https://github.com/carpentries-incubator/better-research-software/raw/refs/heads/main/learners/spacewalks.zip) now.
+As part of the [setup for this course](./installation-instructions.html#spacewalks), you may have downloaded the `spacewalks.zip` archive. 
+If not, you can [download it](https://github.com/carpentries-incubator/better-research-software-r/raw/refs/heads/main/learners/spacewalks.zip) now.
 Save the `spacewalks.zip` archive to your home directory and extract it - you should get a directory called `spacewalks`.
 
-### Opening the project
+The first thing you may want to do is inspect the content of the code and data you received. We will use RStudio for browsing, 
+inspecting, modifying files and running our code.
 
-We will use VS Code IDE (Integrated Development Environment) for software development.
-
-IDEs are graphical application that provide a comprehensive workspace for writing, editing, testing, and debugging code - all in one place. 
-At the core of an IDE is a code editor, and it combines several tools that developers need into a single interface to streamline the code development process. 
-IDEs are extremely useful and modern software development would be very hard without them.
-Some of IDEs also provide graphical interface to a version control system which typically contains a subset of all available version control commands.
-
-VS Code integrates many of these tools and functionalities (e.g. file and project exploring, running code in terminal, viewing different file types, running a testing framework or a debugger, version control system, etc.) either natively or via a large number of extensions.
-It is a popular choice among many researchers, but it is not the only one.
-Outside of this course, you will make a choice which IDE or code editor to use based on your and your team's preferences.
-
-As part of setup, we have installed a few extensions for VS Code to make our software development experience easier.
-
-::: callout
-
-Orient the users and navigate around VS Code.
-
-* Explorer - the top one is a file navigator, or explorer - we can use this to open existing folders containing program files.
-* Search - the next one down is a search capability, so you can search for things (and replace them with other text) over your code files.
-* Source control - this gives you access to source code control, which includes Git version control functionality. This feature means you can do things like clone Git repositories (for example, from GitHub), add and commit files to a repository, things like that.
-* Run and Debug - this allows you to run programs you write in a special way with a debugger, which allows you to check the state of your program as it is running, which is very useful and we’ll look into later.
-* Extensions - this allows you to install extensions to VS Code to extend its functionality in some way.
-
-Check that learners have installed **Microsoft Python extension for Visual Studio Code**. 
-This extension provides support for Python language and will also automatically install Microsoft Pylance (IntelliSense, performant Python language support) and Microsoft Python Debugger extensions.
-:::
-
-### Inspecting the project
-
-To open our directory `spacewalks` in VS Code – go to **File -> Open Folder** and find `spacewalks`.
-
-The first thing you may want to do is inspect the content of the code and data you received to learn more about what it does. 
+RStudio is a very handy tool for software development and is used by many researchers worldwide. 
+To open our directory `spacewalks` in RStudio, we first want to make this an R project.
+Having our software development project folder as a project in R is helpful for reproduciblity as well.
+We will discover in the next episode the issues with "hard coding" specific filesystem paths into our project and how using R projects will help us to create consistent file path references within our project.
 
 You may notice that the software project contains:
 
@@ -144,11 +117,11 @@ You may notice that the software project contains:
 (EVAs, i.e. spacewalks) undertaken by astronauts and cosmonauts from 1965 to 2013 (data provided by NASA via its [Open Data Portal](https://data.nasa.gov/Raw-Data/Extra-vehicular-Activity-EVA-US-and-Russia/9kcy-zwvn/about_data)).
 
    ![JSON data file snippet showing EVA/spacewalk data including EVA ID, country, crew members, vehicle type, date of the spacewalk, duration, and purpose](fig/astronaut-data-json-single-line-snippet.png){alt='JSON data file snippet showing EVA/spacewalk data including EVA ID, country, crew members, vehicle type, date of the spacewalk, duration, and purpose'}
-2. A Python script called `my code v2.py` containing some analysis code.
+2. An R script called `my code v2.R` containing some analysis code.
 
-   ![The first few lines of a Python script](fig/astronaut-analysis-original-code-screenshot.png){alt='The first few lines of a Python script used as example code for the episode'}
+   <!--- screenshot replacement needed ![The first few lines of a Python script](fig/astronaut-analysis-bad-code-screenshot.png){alt='The first few lines of a Python script used as example code for the episode'} -->
 
-   The code in the Python script does some common research tasks:
+   The code in the R script does some common research tasks:
 
   * Reads in the data from the JSON file
   * Changes the data from one data format to another and saves to a file in the new format (CSV)
@@ -215,14 +188,16 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 
 #### File and variable naming
 
-- data (`data.json`) and Python script (`my code v2.py`) files could have more descriptive names
-- Python script (`my code v2.py`) should not contain blank spaces as it may cause problems when running the code from command line
-- variables (e.g. `w`, `t`, `tt`, `ttt`) should have more descriptive and meaningful names
-- version control is embedded in the file name (`my code v2.py`) - there are better ways of keeping track of changes to code and its different versions
+- the data file (`data.json`) and the R script (`my code v2.R`) could have more descriptive names
+- R script (`my code v2.R`) should not contain blank spaces as it may cause problems when running the code from command line
+- variables (e.g. `t`, `tt`, `ttt`) should have more descriptive and meaningful names
+- version control is embedded in file name (`my code v2.R`) - there are better ways of keeping track of changes to code and its different versions
 - the project contains a hidden file `.DS_Store` which is local and personal config file that should not be shared and does not even make sense other than on macOS
 
 #### Code organisation and style
 
+- fixing inconsistent use of = vs <- in the code
+- remove repeated code and use functions instead
 - import statements should be grouped at the top
 - commenting and uncommenting code should not be used to direct the flow of execution / type of analysis being done
 - the code lacks comments, documentation and explanations
@@ -232,10 +207,8 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 
 #### Code content and correctness
 
-- fixing the loop to 375 data entries is not reusable on other data files and would likely break if the data file changed
-- reading the JSON file line by line and extracting the data portions from each line (by removing ",", "[", "]" characters that form part of JSON syntax) is fragile and will break if JSON file is to be reformatted
-- running the code twice causes the program to fail as the result file from the previous run will exist (which the code does not check for) and the script will refuse to overwrite it
-- the code does not specify the encoding when reading the data in, and we are also not sure what encoding the data was saved in originally
+- fixing the loop to 374 data entries is not reusable on other data files and would likely break if the data file changed
+- use 1:seq_len() or seq_along() instead of 1:<length> to avoid hard coding the length of the vector and to handle the 0 case better
 - how can we be confident the data analysis and plot that is produced as a result are correct?
 
 #### Documentation
@@ -295,4 +268,4 @@ We recommend the following resources for some additional reading on reproducible
 
 ## Acknowledgements and references
 
-The content of this course borrows from or references [various work](learners/reference.md#litref).
+The content of this course borrows from or references [various work](learners/reference.md#litref), especially the [original version of this course with python examples][bbrs-py].
