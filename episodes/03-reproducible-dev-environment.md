@@ -6,14 +6,14 @@ exercises: 0
 
 :::::::::::::::::::::::::::::::::::::: questions
 
-- What are virtual environments in software development and why use them?
-- How can we best manage our project's dependencies (required third-party packages)
+-   What are virtual environments in software development and why use them?
+-   How are virtual environments implemented in R? What packages are required?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Set up a virtual coding environment for an R project using `renv`.
+-   Set up the infrastructure to run R code in a self-contained execution environment using {renv}.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -62,7 +62,7 @@ If you run into problems not mentioned here, please open an [issue in the lesson
 
 :::
 
-<!--This is as far as I got
+<!--
 
 Slides on working with renv that might be used as a starting point:
 https://github.com/UoMResearchIT/RRCSF/blob/main/notes/R_on_CSF.qmd
@@ -71,54 +71,48 @@ https://uomresearchit.github.io/RRCSF/notes/R_on_CSF.html#/reproduce-your-enviro
 -->
 ## Software dependencies
 
-If we have a look at our script, we may notice a few `import` lines such as: `import json`, `import csv`, 
-`import datetime as dt` and `import matplotlib.pyplot as plt` throughout the code.
-This means that our code depends on or requires several **libraries** to function - namely `json`, `csv`, `datetime` and `matplotlib`.
+If we have a look at our script, we may notice a few library call such as `library("tidyverse")` throughout the code.
 
-`json`, `csv`, `datetime` are **standard Python libraries** - this means that they come included in a Python distribution and they will be provided for you to import out of the box.
-If you are using some much older Python distributions for any reason, they may not include these libraries out of the box and you may still need to install them manually.
+This means that our code depends on or requires several **non base R packages.** (also called third-party libraries or **dependencies**) to function - namely `read_csv()`, `hour()`, `as_date()` and `ggplot2`.
 
-Python applications also use external libraries that do not come as part of the standard Python distribution - such as `matplotlib` or `pandas`.
-This means that you will have to use a **package manager** tool to install them on your system.
-Applications will also sometimes need a specific version of an external library (e.g. because they were written to work with feature, class, or function that may have been updated in more recent versions), or a specific version of Python interpreter.
-This means that each Python application you work with may require a different setup and a set of dependencies so it is useful to be able to keep these configurations separate to avoid confusion between projects.
+R code often relies on packages that are not part of the base R distribution.
+This means you’ll need to use a package management tool such as install.packages() or a dependency manager like {renv} to install and manage them.
+Many R projects also depend on specific versions of external packages (for example, because the code was written to use a function or behavior that has since changed), or even a specific version of the R interpreter itself.
 
-The solution for this problem is to create a self-contained **virtual environment** per project, which contains a particular version of Python installation plus a number of additional external libraries.
-This is also the reason why we did not want to solve the `ModuleNotFoundError: No module named 'matplotlib'` (in the case you had it) from the previous episode there and then as it would mean installing `matplotlib` system-wide (i.e. globally on your machine).
-It is much better to install libraries in virtual environments only for projects that need them.
+As a result, each R project you work on may require a different setup and set of dependencies.
+To prevent conflicts and maintain reproducibility across projects, it’s helpful to keep these configurations isolated.
+The typical solution is to create a project-specific environment using tools like {renv}, which maintains its own library of packages and records exact versions in a lockfile—ensuring that the project always runs with the same package set it was developed with.
 
 ## What are virtual software environments?
 
 So what exactly are virtual software environments, and why use them?
 
-A Python virtual environment helps us create an **isolated working copy** of a software project
-that uses a specific version of Python interpreter
-together with specific versions of a number of external libraries
-installed into that virtual environment.
-Python virtual environments are implemented as
-directories with a particular structure within software projects,
-containing links to specified dependencies
-allowing isolation from other software projects on your machine that may require
-different versions of Python or external libraries.
+A virtual environment is a self-contained execution context that isolates a program’s dependencies (libraries, configurations, and sometimes even interpreters) from the rest of the system.
+A virtual environment provides:
 
-It is recommended to create a separate virtual environment for each project.
-Then you do not have to worry about changes to the environment of the current project you are working on
-affecting other projects - you can use different Python versions and different versions of the same third party
-dependency by different projects on your machine independently from one another.
+1.  Isolation — Your project uses its own set of libraries without conflicting with global or other project dependencies.\
+2.  Reproducibility — You can recreate the same environment later (on another machine, by another user, or at another time).\
+3.  Portability — The environment can travel with your project, ensuring the code runs the same way anywhere.\
+4.  Control — You decide exactly which versions of dependencies are used.
 
-We can visualise the use of virtual environments for different Python projects on the same machine as follows:
+You can think of it as a sandbox for your code’s ecosystem: the code inside the environment “sees” only the libraries and settings that belong to it.
 
-![Diagram to depict different Python environments containing different packages on the same machine](fig/virtual-env.png){alt='A single system might contain multiple virtual environments, each containing a different version of Python and the set of third-party libraries it needs (dependencies) e.g. NumPy, Pandas or Matplotlib. Each environment contains its own complete copy of the required version of each dependency.'}
+R doesn’t have Python-style “venvs” baked into the interpreter.
+Instead, isolation is done by per-project library trees plus a lockfile, most commonly via the {renv} package.
+Under the hood it’s mostly library path manipulation.
 
-Another big motivator for using virtual environments is that they make sharing your code with others much easier -
-as we will see shortly you can record your virtual environment in a special file and share it with your collaborators
-who can then recreate the same development environment on their machines.
+We can still implement this concept, even if implemented differently than Python’s venv or Conda.
+This is how
 
-You do not have to worry too much about specific versions of external libraries
-that your project depends on most of the time.
-Virtual environments also enable you to always use
-the latest available version without specifying it explicitly.
-They also enable you to use a specific older version of a package for your project, should you need to.
+| Abstract Concept | R implementation |
+|------------------------------------|------------------------------------|
+| Isolated dependency space | A project-specific library path (e.g. `renv/library`) that overrides global `.libPaths()` |
+| Environment definition | A lockfile (`renv.lock`) describing exact package version and sources. |
+| Reproducibility | Functions like `renv::snapshot()` and `renv::restore()` that captures and regenerates the environment |
+| Environment activation | Automatically handled by an autoload script `.Rprofile` when the project opens |
+| Interpreter scope | Typically the same R executable, but you can use containerization (Docker, Podman, Apptainer) to isolate R binaries and OS layers. |
+
+: How virtual environments get implemented in R
 
 :::::::::::::::::::::: callout
 
@@ -126,7 +120,7 @@ They also enable you to use a specific older version of a package for your proje
 
 Creating and managing isolated environments for each of your software projects and sharing descriptions of those environments alongside the relevant code is a great way to make your software and analyses much more reproducible.
 However, "true" computational reproducibility is very difficult to achieve.
-For example, the tools we will use in this lesson only track the dependencies of our software, remaining unanware of other aspects of the software's environment such as the operating system and hardware of the system it is running on.
+For example, the tools we will use in this lesson only track the dependencies of our software, remaining unaware of other aspects of the software's environment such as the operating system and hardware of the system it is running on.
 These properties of the environment can influence the running of the software and the results it produces and should be accounted for if a workflow is to be truly reproducible.
 
 Although there is more that we can do to maximise the reproducibility of our software/workflows, the steps described in this episode are an excellent place to start.
@@ -134,18 +128,24 @@ We should not let the difficulty of attaining "perfect" reproducibility prevent 
 
 ::::::::::::::::::::::::::::::
 
-## Managing virtual environments
+## Managing virtual environments R-style
 
-There are several command line tools used for managing Python virtual environments - we will use `venv`,
-available by default from the standard `Python` distribution since `Python 3.3`.
+Instantiating virtual environments in R is multi-step, multi-tool process.
+The first step is to rely on RStudio's R Project feature, which begins the process of creating an isolated dependency space.
+Typically, when we call on packages to use in an RScript, we make sure the package code is available locally.
+Packages are downloaded from the nether via `install.packages("my_package")` and installed in expected places in your machine.
+The actual location is platform specific:
 
-Part of managing your (virtual) working environment involves
-installing, updating and removing external packages on your system.
-The Python package manager tool `pip` is most commonly used for this -
-it interacts and obtains the packages from the central repository called
-[Python Package Index (PyPI)](https://pypi.org/).
+-   macOS / Linux: \~/Library/R/x.y/library or \~/R/x.y/library
+-   Windows: C:/Users/<username>/Documents/R/win-library/x.y/
 
-So, we will use `venv` and `pip` in combination to help us create and share our virtual development environments.
+R load packages from these directories, which are listed in .libPaths() and available to all R code in that machine.
+If you put a project-specific library fist in that vector, you have effectively created an "environment."
+
+The second step addresses the environment definition aspect of a virtual environment and it is called `renv`.
+Calling `renv::init()` captures packages and dependencies inside an RStudio project and lists them in a file called `renv.lock`.
+A point of information relevant to using `renv` effectively, after `renv::init()`, installing additional packages should be done with `renv::install()` rather than `install.packages()`.
+Doing so will update the lock file with the relevant package dependencies.
 
 ### Creating virtual environments
 
