@@ -28,47 +28,37 @@ to enable others to see and contribute to it. We now want to start developing th
 At this point, the code in your local software project's directory should be as in:
 <https://github.com/carpentries-incubator/bbrs-software-project/tree/03-reproducible-dev-environment>
 
-::::::
+::::::::::::::
 
-::: instructor
+::::::::::::::::::::::::::::::::::::: instructor
 
 Some learners may encounter issues when installing packages or trying to restore recorded environments. To assist with troubleshooting during workshops, we have compiled a list of common issues that instructors have observed in the past.
 
-General recommendations for troubleshooting package installation issues:
+If you run into problems not mentioned here, please open an [issue in the lesson repository](https://github.com/carpentries-incubator/better-research-software/issues/) so we can track them and update the lesson material accordingly.
+
+#### Troubleshooting package installation issues
 
 - Try using `install.packages('some.pkg', dependencies = TRUE)`
 
-- [pak](https://github.com/r-lib/pak) often does a better job of figuring out and installing (system) dependencies:
+- Use `.libPaths()` and verify that it includes at least one folder for which the user has write permisisons.
+  If that’s not the case, try setting `R_LIBS_USER="some/writable/path"` via either `Sys.setenv()` or through an `.Renviron` file.
+
+- [{pak}](https://github.com/r-lib/pak) often does a better job of figuring out and installing (system) dependencies:
   ```R
   install.packages('pak')
   pak::pkg_deps_tree('some.pkg')
   pak::pkg_sysreqs('some.pkg')
   ```
-  You can also tell `renv` to use `pak` as package manager: `Sys.setenv(RENV_CONFIG_PAK_ENABLED=TRUE)`
-
-- Use `.libPaths()` and verify that it includes at least one folder to which the user has write permisisons.
-  If that’s not the case, try setting `Sys.setenv(R_LIBS_USER="some/writable/path")`. You can make this permanent by placing a `R_LIBS_USER="the/path"` line in `file.edit(path.expand("~/.Renviron"))`.
-
-General recommendations on using `renv` (some of these might be moved to the course materials):
-
-- `snapshot.type='explicit'`: important in the context of a package, or to use a hand-curated list of "looser" dependencies (i.e. using a DESCRIPTION file). It can improve cross-platform / cross-version compatibility issues.
-
-- `r.version`: by default `renv` will use and record the host's R version in the lock file. In the context of a collaborative project this is problematic, because everyone's `renv.lock` file might look different. Agree on a shared `renv::settings$r.version`, or use explicit dependencies (and don't commit the lock file)
-
-- Make sure to use `renv::init(bioconductor=TRUE)` if using any packges from Bioconductor.
+  You can tell {renv} to use {pak} by default by setting `RENV_CONFIG_PAK_ENABLED=TRUE` 
 
 
-If you run into problems not mentioned here, please open an [issue in the lesson repository](https://github.com/carpentries-incubator/better-research-software/issues/) so we can track them and update the lesson material accordingly.
+####  General recommendations on using {renv}
 
-:::
+- Often it's easier to start with a fresh environment rather than trying to fix an existing one.
+  You can do this by deleting the `renv` folder and `renv.lock` file, then calling `renv::init()` again.
 
-<!--
+::::::::::::::::::::::::::::::::::::::::::::::::
 
-Slides on working with renv that might be used as a starting point:
-https://github.com/UoMResearchIT/RRCSF/blob/main/notes/R_on_CSF.qmd
-https://uomresearchit.github.io/RRCSF/notes/R_on_CSF.html#/reproduce-your-environment-r-version 
-
--->
 ## Software dependencies
 
 If we have a look at our script, we may notice a few library calls such as `library("tidyverse")` throughout the code.
@@ -148,157 +138,98 @@ Calling `renv::init()` captures packages and dependencies inside an RStudio proj
 A point of information relevant to using `renv` effectively, after `renv::init()`, installing additional packages should be done with `renv::install()` rather than `install.packages()`.
 Doing so will update the lock file with the relevant package dependencies.
 
+
+
+
 ### Creating virtual environments
 
-Creating a virtual environment with `venv` is done by executing the following command:
+To create a new R virtual environment for our project, make sure that the {renv} package is installed and the current Rstudio project is active. Then run:
 
-```bash
-$ python3 -m venv /path/to/new/virtual/environment
+```r
+renv::init()
 ```
 
-where `/path/to/new/virtual/environment` is a path to a directory where you want to place it -
-conventionally within your software project so they are co-located.
-This will create the target directory for the virtual environment.
-
-For our project let's create a virtual environment called "venv_spacewalks" from our project's root directory.
+If you list the contents of the project directory, you should see something like:
 
 ```bash
-$ python3 -m venv venv_spacewalks
-```
-
-If you list the contents of the newly created directory "venv_spacewalks", on a Mac or Linux system
-(slightly different on Windows as explained below) you should see something like:
-
-```bash
-$ ls -l venv_spacewalks
+$ tree -a -L 5
 ```
 
 ```output
-total 8
-drwxr-xr-x  12 alex  staff  384  5 Oct 11:47 bin
-drwxr-xr-x   2 alex  staff   64  5 Oct 11:47 include
-drwxr-xr-x   3 alex  staff   96  5 Oct 11:47 lib
--rw-r--r--   1 alex  staff   90  5 Oct 11:47 pyvenv.cfg
+.
+├── .Rprofile
+├── renv
+│   ├── .gitignore
+│   ├── activate.R
+│   ├── library
+│   │   └── PLATFORM
+│   │       └── R-X.Y
+│   |           └── ARCHITECTURE
+│   └── settings.json
+└── renv.lock
 ```
 
-So, running the `python3 -m venv venv_spacewalks` command created the target directory called "venv_spacewalks" containing:
+The `renv::init()` command should have created a few files and directories:
 
-- `pyvenv.cfg` configuration file with a home key pointing to the Python installation from which the command was run,
-- `bin` subdirectory (called `Scripts` on Windows) containing a symlink of the Python interpreter binary used to create the environment and the standard Python library,
-- `lib/pythonX.Y/site-packages` subdirectory (called `Lib\site-packages` on Windows) to contain its own independent set of installed Python packages isolated from other projects, and
-- various other configuration and supporting files and subdirectories.
+- `.Rprofile` is a file that executes when R is started in the project directory (e.g. when you open the RStudio project), and should now have a call to `source("renv/activate.R")` (see below)
+- `renv/.gitignore` tells Git to ignore the `library` subdirectory (it can get quite large, and can always be recreated from the lock file)
+- `renv/activate.R` script that sets up the project to use the virtual environment (sets `.libPaths()` to use the project-specific library)
+- `library/PLATFORM/X.Y/ARCHITECTURE` subdirectory with (hard-links to) the installed packages.
+- `renv/settings.json` configuration settings for {renv} (see the caution box below for some important settings to consider)
+- `renv.lock` lock file that records the exact package versions and sources for the environment
 
-Once you’ve created a virtual environment, you will need to activate it.
+Note that, since our software project is being tracked by Git, most of these files will show up in version control - we will see how to handle them using Git in one of the subsequent episodes.
 
-On Mac or Linux, it is done as:
 
-```bash
-$ source venv_spacewalks/bin/activate
-(venv_spacewalks) $
-```
+:::::::::::::::::::::::::::::::::::::::::: callout
 
-On Windows, recall that we have `Scripts` directory instead of `bin` and activating a virtual environment is done as:
+1. Make sure to use `renv::init(bioconductor=TRUE)` if using any packges from {Bioconductor}.
 
-```bash
-$ source venv_spacewalks/Scripts/activate
-(venv_spacewalks) $
-```
+2. **{renv} will track, but not control, the R version** used in the project. That means that if you open the project with a different R version than the one used to create it, {renv} will throw a warning, but still try to use the package versions in the lock file, which may not be compatible with the R version in use.
 
-Activating the virtual environment will change your command line’s prompt to show what virtual environment you are currently using (indicated by its name in round brackets at the start of the prompt).
-It will also modify the environment so that running Python will get you the particular version of Python configured in your virtual environment.
+There are a few ways to handle this:
 
-You can verify you are using your virtual environment's version of Python by checking the path using the command `which`:
+- Install multiple R versions on your machine and switch between them as needed. In Rstudio, you can set the R version for a project via `Tools -> Project Options... -> General -> R version`. You might also want to look at the [{rig}](https://github.com/r-lib/rig) package.
 
-```bash
-(venv_spacewalks) $ which python3
-```
+- Specify the R version in the `renv.lock` file manually. Minor version variations will usually not be a problem when trying to restore an environment, but they will be a headache when working on a collaborative version-controlled project, as everyone's `renv.lock` file will look slightly different. Agree-on and set a shared `"r.version": "X.Y.Z"` in the `renv/settings.json` file.
 
-:::::::::::::::::::::::::::::::::::::::::: caution
-
-### Environment Variables
-
-Some learners encounter problems at this stage, where system-level packages are still used by Python instead of the versions installed into the virtual environment.
-Previous participants solved the problem by unsetting the `PYTHONHOME`, `PYTHONPATH` and `PYTHONSTARTUP` environment variables before creating the virtual environment for the project:
-
-```bash
-$ unset PYTHONHOME PYTHONPATH PYTHONSTARTUP
-$ python3 -m venv ./venv_spacewalks
-```
+- If you are working on a package, or want to specify a hand-curated list of "looser" dependencies, you can set `"snapshot.type"="explicit"))`. This allows you to define dependencies in a [`DESCRIPTION`](https://r-pkgs.org/description.html) file, which can improve cross-platform / cross-version compatibility. 
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-:::::::::::::::::::::::::::::::::::::::::  callout
 
-### Adding a Python Interpreter in VS Code
+### Activating and deactivating virtual environments
 
-We can create a new or activate an existing virtual environment for our project to work in. 
-Since we have already created a virtual environment, we just need to activate it within a terminal environment in VS Code.
-However, each time we open a new terminal - we would need to activate the virtual environment again.
+You will have to restart the R session (in Rstudio: Session -> Restart R) to activate the virtual environment created by {renv}.
+To verify that the environment is active, you can run:
 
-It is also a good idea to check and set the Python interpreter manually in VS Code to make sure things are configured correctly for your VS Code project.
-This way, VS Code will remember which Python interpreter we want to use and invoke it in the future.
-
-You can do that as follows:
-
-- Navigate to the location of the Python interpreter binary within the virtual environment using the file browser.
-The Python binary will be located in `venv_spacewalks/bin/python3` (Linux, macOS) or `venv_spacewalks/Scripts/python3` (Windows) within our project directory.
-
-![](fig/vscode-select-interpreter.png){alt='Select python interpreter in VS Code' .image-with-shadow width="800px"}
-
-- Right-click on the binary and select "Copy Path".
-- Use the keyboard shortcut `CTRL-SHIFT-P` (Windows, Linux) or `CMD-SHIFT-P` (macOS) or to bring up the VS Code **Command Palette**, then search for `Python: Select Interpreter`.
-- Click `Enter interpreter path...`, and paste the path you copied followed by Enter.
-
-![](fig/vscode-interpreter-path.png){alt='Set interpreter path in VS Code' .image-with-shadow width="800px"}
-
-If everything is setup correctly, when you select a Python file in the file explorer in VS Code you should see the interpreter and virtual environment stated in the information bar at the bottom of VS Code.
-Any new terminal you open in VS Code from now on in will start with the activated virtual environment.
-And you can also run the code using the run (play) button from VS Code's UI - and it will use the same Python interpreter to run your code you have just configured.
-
-![](fig/vscode-interpreter-venv.png){alt='Showing interpreter status in VS Code status bar' .image-with-shadow width="800px"}
-
-:::::::::::::::::::::::::::::::::
-
-:::::::::::::::::::::::::::::::::::::::::  callout
-
-### Naming Virtual Environments
-
-What is a good name to use for a virtual environment?
-
-Using `venv` or `.venv` as the name for an environment and storing it within the project's directory seems to be the standard practice - this way when you come across such a subdirectory within a software project, by convention you know it contains its virtual environment details.
-A slight downside to this is that all different virtual environments on your machine will use the same name and the current one is determined by the context of the path you are currently located in.
-Note that `.venv` is also a hidden directory and that may not be what you want to do.
-
-We used `venv_spacewalks` - this deviates a from the convention of calling them `venv` or `.venv`, but does give a clear project-specific prompt of `(venv_spacewalks)` and indicates clearly it is a virtual environment.
-
-Note that you can also set the command line prompt for the virtual environment:
-
-```bash
-python -m venv --prompt spacewalks venv
-```
-This will create a virtual environment in `venv` folder with a string "(spacewalks)" on the command line prompt.
-It gives a shorter, meaningful prompt and sticks to convention at the same time.
-
-In the future, you and your team decide what naming convention works best for you.
-
-::::::::::::::::::::::::::::::::::::::::::::::::::
-
-When you’re done working on your project, you can exit the environment with:
-
-```bash
-(venv_spacewalks) $ deactivate
+```r
+renv::status()
 ```
 
-If you've just done the `deactivate`, ensure you reactivate the environment ready for the next part:
+Ideally, you should see:
 
-```bash
-$ source venv_spacewalks/bin/activate
-(venv_spacewalks) $
+```output
+No issues found -- the project is in a consistent state.
 ```
 
-Note that, since our software project is being tracked by Git, the newly created virtual environment will show up in version control - we will see how to handle it using Git in one of the subsequent episodes.
+If, for any reason, you want to deactivate the virtual environment and go back to using the global R library paths, you can run:
 
-### Installing external packages
+```r
+renv::deactivate()
+```
+
+This will remove the `source("renv/activate.R")` line from `.Rprofile`, but leave the rest of the environment intact, so you can reactivate it later with `renv::activate()`. Make sure to restart the R session after deactivating or activating the environment.
+
+
+### Installing new packages
+
+A point of information relevant to using {renv} effectively, after `renv::init()`, installing additional packages should be done with `renv::install()` rather than `install.packages()`.
+Doing so will update the lock file with the relevant package dependencies.
+
+
+<!-- Got this far -->
+
 
 We noticed earlier that our code depends on four **external packages/libraries** -
 `json`, `csv`, `datetime` and `matplotlib`.
