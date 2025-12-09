@@ -71,15 +71,16 @@ https://uomresearchit.github.io/RRCSF/notes/R_on_CSF.html#/reproduce-your-enviro
 -->
 ## Software dependencies
 
-If we have a look at our script, we may notice a few library call such as `library("tidyverse")` throughout the code.
+If we have a look at our script, we may notice a few library calls such as `library("tidyverse")` throughout the code.
 
 This means that our code depends on or requires several **non base R packages.** (also called third-party libraries or **dependencies**) to function - namely `read_csv()`, `hour()`, `as_date()` and `ggplot2`.
 
 R code often relies on packages that are not part of the base R distribution.
-This means you’ll need to use a package management tool such as install.packages() or a dependency manager like {renv} to install and manage them.
-Many R projects also depend on specific versions of external packages (for example, because the code was written to use a function or behavior that has since changed), or even a specific version of the R interpreter itself.
+This means you’ll need to use a package management tool such as `install.packages()` or a dependency manager like {renv} to install and manage them.
 
+Many R projects also depend on specific _versions_ of external packages (for example, because the code was written to use a function or behavior that has since changed), or even a specific version of the R interpreter itself.
 As a result, each R project you work on may require a different setup and set of dependencies.
+
 To prevent conflicts and maintain reproducibility across projects, it’s helpful to keep these configurations isolated.
 The typical solution is to create a project-specific environment using tools like {renv}, which maintains its own library of packages and records exact versions in a lockfile—ensuring that the project always runs with the same package set it was developed with.
 
