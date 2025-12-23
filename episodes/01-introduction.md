@@ -144,25 +144,8 @@ You may notice that the software project contains:
 
 3. A folder called `astronaut-data-analysis-old` - which presumably contains previous versions of the analysis acting as some sort of a backup.
 4. A hidden file `.DS_Store` - Desktop Services Store is a hidden metadata file automatically created by macOS Finder in every folder, storing user-specific view settings like icon positions, window size, and background colors, acting much like Windows' `desktop.ini`.
-This makes us think that the author was using macOS operating system but this file does not make part of the project itself.
+This makes us think that the author was using macOS operating system but this file is not part of the project itself.
 
-If you do not see hidden file `.DS_Store`, that means that your VS Code is configured to exclude certain files and directories from the File Explorer View.
-One way to modify this is going to ‘Code’ > ‘Preferences’ > ‘Settings’ (‘Code’ > ‘Preferences’ > ‘Settings’ on macOS) and searching for ‘exclude’ and you will find the default exclude list under `Files: exclude`.
-You can remove the `**/.DS_Store` pattern and the hidden file `.DS_Store` should appear in VS Code's File Explorer.
-
-Alternatively, open a terminal window within VS Code, navigate to your `spacewalks` folder (we are assuming you downloaded it into your home directory) and issue `ls -la` command to list the directory contents.
-
-```bash
-cd ~/spacewalks
-ls -la
-total 288
-drwx------@  6 mbassan2  staff     192 30 Jul 10:56 .
-drwxr-x---+ 55 mbassan2  staff    1760 14 Nov 14:34 ..
--rw-r--r--@  1 mbassan2  staff    6148 30 Jul 10:54 .DS_Store
-drwxrwxr-x@  4 mbassan2  staff     128  4 Apr  2025 astronaut-data-analysis-old
--rw-rw-r--@  1 mbassan2  staff  132981  4 Apr  2025 data.json
--rw-rw-r--@  1 mbassan2  staff    1514 30 Jul 10:56 my code v2.py
-```
 
 :::::: challenge
 
@@ -243,22 +226,9 @@ We will try to make this research software project a "bit better" for future use
 
 Let's try to run the code and see if we can reproduce the results.
 
-Open the terminal in VS Code (unless you have already done it) and type the following command.
+Open the script, `my code v2.R`,  in RStudio and run it all via source or by selecting all the code and running it.
 
-```bash
-$ python3 my\ code\ v2.py
-```
-
-You will get an error that looks something like the following:
-
-```output
-Traceback (most recent call last):
-  File "/Users/USERNAME/Downloads/spacewalks/my code v2.py", line 2, in <module>
-    data_f = open('/home/sarah/Projects/astronaut-analysis/data.json', 'r')
-FileNotFoundError: [Errno 2] No such file or directory: '/home/sarah/Projects/astronaut-analysis/data.json'
-```
-
-We get this error because the paths to the data files have been hard coded as absolute paths for the original developer's machine.
+You will get an error. We get this error because the paths to the data files have been hard coded as absolute paths for the original developer's machine.
 Hard-coding paths is not very reproducible, as it means the paths need to be changed whenever the code is run on a new computer.
 We will soon fix the code to use the relative paths within the project structure and eventually we will change the code to take in arguments from the command line when it is run too.
 
