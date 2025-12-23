@@ -108,8 +108,20 @@ inspecting, modifying files and running our code.
 
 RStudio is a very handy tool for software development and is used by many researchers worldwide. 
 To open our directory `spacewalks` in RStudio, we first want to make this an R project.
+
 Having our software development project folder as a project in R is helpful for reproduciblity as well.
 We will discover in the next episode the issues with "hard coding" specific filesystem paths into our project and how using R projects will help us to create consistent file path references within our project.
+
+To open our directory `spacewalks` in RStudio, we first want to make this an R project.
+Having our software development project folder as a project in R is helpful for reproduciblity as well.
+We will discover in the next episode the issues with "hard coding" specific filesystem paths into our project and R projects will help us to create consistent file path references within our project.
+
+To create a new project – go to **File -> New Project** this will open the new project setup wizard.
+Choose **Existing Directory**, then navigate to where you extracted your spacewalks folder in your home directory using the **Browse...** button and click **Open** once you have selected the `spacewalks` folder.
+Then click **Create Project**. 
+RStudio will then reopen into your project.  
+Note, now it says `spacewalks` in the upper-right hand corner of RStudio since that project is open and the Files pane is showing the files from the `spacewalks` folder.
+When you return to working on this project later, you can click on the `spackewalks.Rproj` file in your file explorer/finder window or you can use the Rproject menu in the upper-right hand side of RStudio to select which projct you would like to work in.
 
 You may notice that the software project contains:
 
@@ -118,6 +130,8 @@ You may notice that the software project contains:
 
    ![JSON data file snippet showing EVA/spacewalk data including EVA ID, country, crew members, vehicle type, date of the spacewalk, duration, and purpose](fig/astronaut-data-json-single-line-snippet.png){alt='JSON data file snippet showing EVA/spacewalk data including EVA ID, country, crew members, vehicle type, date of the spacewalk, duration, and purpose'}
 2. An R script called `my code v2.R` containing some analysis code.
+
+3. `spacewalks.Rproj` the R project for this folder.
 
    <!--- screenshot replacement needed ![The first few lines of a Python script](fig/astronaut-analysis-bad-code-screenshot.png){alt='The first few lines of a Python script used as example code for the episode'} -->
 
