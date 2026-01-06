@@ -123,9 +123,8 @@ We should not let the difficulty of attaining "perfect" reproducibility prevent 
 
 Instantiating virtual environments in R is multi-step, multi-tool process.
 The first step is to rely on RStudio's R Project feature, which begins the process of creating an isolated dependency space.
-Typically, when we call on packages to use in an RScript, we make sure the package code is available locally.
-Packages are downloaded from the nether via `install.packages("my_package")` and installed in expected places in your machine.
-The actual location is platform specific:
+In order to use a package in an RScript, we have to make sure the package code is available locally.
+By default, packages downloaded from the web via `install.packages("my_package")` are installed in a platform specific predefined location, e.g:
 
 -   macOS / Linux: \~/Library/R/x.y/library or \~/R/x.y/library
 -   Windows: C:/Users/<username>/Documents/R/win-library/x.y/
