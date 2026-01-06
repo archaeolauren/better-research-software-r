@@ -196,7 +196,7 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 
 #### Code organisation and style
 
-- fixing inconsistent use of = vs <- in the code
+- fixing inconsistent use of `=` vs `<-` in the code
 - remove repeated code and use functions instead
 - import statements should be grouped at the top
 - commenting and uncommenting code should not be used to direct the flow of execution / type of analysis being done
