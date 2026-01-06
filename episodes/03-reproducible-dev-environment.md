@@ -133,7 +133,10 @@ The specific paths in your machine can be found by running `.libPaths()` in an R
 R will attempt to install to and load packages from these directories (in order).
 If you point that vector to a project-specific library, you have effectively created an "environment".
 
-The second step addresses the environment definition aspect of a virtual environment and it is called `renv`.
+To have a _reproducible_ environment, we need to be able to recreate the library later. We can do this by
+by keeping a detailed record (a _lock file_) of the specific package versions we installed.
+
+{renv} is an R package designed to take care of the complete process - creating a project-specific library (`renv::init`), keeping track of the packages installed in it (`renv::snapshot`), and restoring environments from a recorded lock file (`renv::restore`).
 Calling `renv::init()` captures packages and dependencies inside an RStudio project and lists them in a file called `renv.lock`.
 A point of information relevant to using `renv` effectively, after `renv::init()`, installing additional packages should be done with `renv::install()` rather than `install.packages()`.
 Doing so will update the lock file with the relevant package dependencies.
