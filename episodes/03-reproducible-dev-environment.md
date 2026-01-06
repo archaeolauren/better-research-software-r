@@ -129,8 +129,9 @@ By default, packages downloaded from the web via `install.packages("my_package")
 -   macOS / Linux: \~/Library/R/x.y/library or \~/R/x.y/library
 -   Windows: C:/Users/<username>/Documents/R/win-library/x.y/
 
-R load packages from these directories, which are listed in .libPaths() and available to all R code in that machine.
-If you put a project-specific library fist in that vector, you have effectively created an "environment."
+The specific paths in your machine can be found by running `.libPaths()` in an R console.
+R will attempt to install to and load packages from these directories (in order).
+If you point that vector to a project-specific library, you have effectively created an "environment".
 
 The second step addresses the environment definition aspect of a virtual environment and it is called `renv`.
 Calling `renv::init()` captures packages and dependencies inside an RStudio project and lists them in a file called `renv.lock`.
