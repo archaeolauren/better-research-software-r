@@ -208,7 +208,7 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 #### Code content and correctness
 
 - fixing the loop to 374 data entries is not reusable on other data files and would likely break if the data file changed
-- use 1:seq_len() or seq_along() instead of 1:<length> to avoid hard coding the length of the vector and to handle the 0 case better
+- use `1:seq_len()` or `seq_along()` instead of `1:<length>` to avoid hard coding the length of the vector and to handle the 0 case better
 - how can we be confident the data analysis and plot that is produced as a result are correct?
 
 #### Documentation
