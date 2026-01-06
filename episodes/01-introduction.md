@@ -107,6 +107,9 @@ The first thing you may want to do is inspect the content of the code and data y
 inspecting, modifying files and running our code.
 
 RStudio is a very handy tool for software development and is used by many researchers worldwide. 
+RStudio is an Integrated Development Environment (IDE).
+IDEs are graphical application that provide a comprehensive workspace for writing, editing, testing, and debugging code - all in one place. 
+While RStudio is seemingly the most popular, current IDE for working with R, there are other IDEs you can use (VS code, Positron, etc).
 To open our directory `spacewalks` in RStudio, we first want to make this an R project.
 
 Having our software development project folder as a project in R is helpful for reproduciblity as well.
