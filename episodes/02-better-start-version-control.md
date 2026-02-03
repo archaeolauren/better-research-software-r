@@ -419,6 +419,15 @@ The method that does not need any special editing software is via the shell, tha
 $ echo ".Rproj.user" > .gitignore
 $ echo ".gitignore" >> .gitignore
 ```
+
+:::::::::::: spoiler
+
+### Reusing standard gitignore tempates
+
+You might find github's collection of [gitignore templates](https://github.com/github/gitignore) helpful for common coding projects.
+
+::::::::::::::::::::
+
 If you issue a `git status` at this point Git will let you know that 
 wealso need to track itself:
 
