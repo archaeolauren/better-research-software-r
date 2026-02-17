@@ -63,11 +63,11 @@ $ source venv_spacewalks/Scripts/activate # Windows
 
 :::
 
-## Place `import` statements at the top
+## Place `library` funtions at the top
 
-Let's have a look our code again - the first thing we may notice is that our script currently places import statements 
+Let's have a look our code again - the first thing we may notice is that our script currently places library function calls
 throughout the code.
-Conventionally, all import statements are placed at the top of the script so that dependent libraries
+Conventionally, all loading of libraries is done at the top of the script so that dependent libraries
 are clearly visible and not buried inside the code (there are also standard ways of describing dependencies -
 e.g. using a `requirements.txt` file).
 This will help readability (accessibility) and reusability of our code.
