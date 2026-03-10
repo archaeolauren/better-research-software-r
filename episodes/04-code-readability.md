@@ -7,7 +7,7 @@ exercises: 30
 ::: questions
 
 - Why does code readability matter?
-- How can I organise my code to be more readable?
+- How can I organize my code to be more readable?
 - What types of documentation can I include to improve the readability of my code?
 
 :::
@@ -18,24 +18,18 @@ After completing this episode, participants should be able to:
 
 - Import third-party libraries at the top of a script
 - Choose function and variable names that help explain the purpose of the function or variable
-- Organise code into reusable functions that achieve a singular purpose
-- Write informative comments and docstrings to provide more detail about what the code is doing
+- Organize code into reusable functions that achieve a singular purpose
+- Write informative comments and roxygen2 comments to provide more detail about what the code is doing
 
 :::
 
-In this episode, we will introduce the concept of readable code and consider how it can help create reusable 
-scientific software and empower collaboration between researchers.
+In this episode, we will introduce the concept of readable code and consider how it can help create reusable scientific software and empower collaboration between researchers.
 
-While all developers hope their code will be stable long term, software often has to change due to changes in the real world.
-As requirements change, so must the relevant code.
-When code needs to be changed, the developer that created it or more likely a different developer needs to understand that code before they can implement the new requirements.
-Readable code facilitates the reading and understanding of the abstraction phases and, as a result, facilitates the evolution of the codebase.
-Readable code saves future developers' time and effort.
+While all developers hope their code will be stable long term, software often has to change due to changes in the real world. As requirements change, so must the relevant code. When code needs to be changed, the developer that created it or more likely a different developer needs to understand that code before they can implement the new requirements. 
 
-In order to develop readable code, we should ask ourselves: "If I re-read this piece of code in fifteen days or one 
-year, will I be able to understand what I have done and why?" 
-Or even better: "If a new person who just joined the project reads my software, will they be able to understand 
-what I have written here?"
+Readable code facilitates the reading and understanding of the abstraction phases and, as a result, facilitates the evolution of the codebase. Readable code saves future developers' time and effort.
+
+In order to develop readable code, we should ask ourselves: "If I re-read this piece of code in fifteen days or one year, will I be able to understand what I have done and why?"  Or even better: "If a new person who just joined the project reads my software, will they be able to understand what I have written here?"
 
 In this episode, we will learn a few specific software best practices we can follow to help create more readable code. 
 
@@ -50,136 +44,84 @@ At this point, the code in your local software project's directory should be as 
 
 ::: spoiler
 
-### Activate your virtual environment
+### Make sure your packages and dependencies are up to date
 
-If it is not already active, make sure to activate your virtual environment from the root of
-the software project directory:
+In the previous section we discusses using the package renv.lock to track packages and their dependencies. At this time, you should have a current renv.lock files and you should have restored the packages library. 
 
-```bash
-$ source venv_spacewalks/bin/activate # Mac or Linux
-$ source venv_spacewalks/Scripts/activate # Windows
-(venv_spacewalks) $
+You can check that the project is up-to-date with 
+
+```r
+renv::status() #you can run this any time
+```
+
+If you haven't, you can restored the packages and their dependencies by running
+
+```r
+renv::restore("renv.lock")
 ```
 
 :::
 
 ## Place `library` funtions at the top
 
-Let's have a look our code again - the first thing we may notice is that our script currently places library function calls
-throughout the code.
-Conventionally, all loading of libraries is done at the top of the script so that dependent libraries
-are clearly visible and not buried inside the code (there are also standard ways of describing dependencies -
-e.g. using a `requirements.txt` file).
-This will help readability (accessibility) and reusability of our code.
+Let’s look at our code again. One thing that stands out is that we’re calling library() in multiple places throughout the script. By convention, all libraries should be loaded at the top so dependencies are easy to see and not buried in the logic. This improves readability and makes the code easier to reuse and maintain.
 
 Our code after the modification should look like the following.
 
-```python
-import json
-import csv
-import datetime as dt
-import matplotlib.pyplot as plt
+```r
 
-# https://data.nasa.gov/resource/eva.json (with modifications)
-data_f = open('./eva-data.json', 'r', encoding='ascii')
-data_t = open('./eva-data.csv','w', encoding='utf-8')
-g_file = './cumulative_eva_graph.png' 
+library()
 
+#the rest of the code goes below 
 
-fieldnames = ("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
-
-data=[]
-
-for i in range(375):
-    line=data_f.readline()
-    print(line)
-    data.append(json.loads(line[1:-1]))
-#data.pop(0)
-## Comment out this bit if you don't want the spreadsheet
-
-w=csv.writer(data_t)
-
-time = []
-date =[]
-
-j=0
-for i in data:
-    print(data[j])
-    # and this bit
-    w.writerow(data[j].values())
-    if 'duration' in data[j].keys():
-        tt=data[j]['duration']
-        if tt == '':
-            pass
-        else:
-            t=dt.datetime.strptime(tt,'%H:%M')
-            ttt = dt.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second).total_seconds()/(60*60)
-            print(t,ttt)
-            time.append(ttt)
-            if 'date' in data[j].keys():
-                date.append(dt.datetime.strptime(data[j]['date'][0:10], '%Y-%m-%d'))
-                #date.append(data[j]['date'][0:10])
-
-            else:
-                time.pop(0)
-    j+=1
-
-t=[0]
-for i in time:
-    t.append(t[-1]+i)
-
-date,time = zip(*sorted(zip(date, time)))
-
-plt.plot(date,t[1:], 'ko-')
-plt.xlabel('Year')
-plt.ylabel('Total time spent in space to date (hours)')
-plt.tight_layout()
-plt.savefig(g_file)
-plt.show()
 ```
 
 Let's make sure we commit our changes.
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.py
-(venv_spacewalks) $ git commit -m "Move import statements to the top of the script"
+(venv_spacewalks) $ git add eva_data_analysis.R
+(venv_spacewalks) $ git commit -m "Move library calls to the top of the script"
 ```
+## Rules for variable names in R
 
-## Use meaningful variable names
+Check the [official documentation](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#R-commands_002c-case-sensitivity_002c-etc_002e)
+
+- Only alphanumeric characters, dot, and underscores are permitted in variable names.  
+- Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
+- After the first character, you can use letters, digits, dots, and underscores.  
+- Cannot contain spaces or most punctuation (e.g., -, +, ?, !, @) unless you quote the name.  
+- Cannot be a reserved word (keywords) such as if, else, repeat, while, function, for, in, next, break, TRUE, FALSE, NULL, NA, NaN, Inf, etc.  
+- Variable names — and objects in general — are case-sensitive. So `speed_of_light` and `Speed_Of_Light` are not the same. 
+
+
+
+### Useful things to consider when naming variables
 
 Variables are the most common thing you will assign when coding, and it's really important that it is clear what each variable means in order to understand what the code is doing.
+
 If you return to your code after a long time doing something else, or share your code with a colleague, it should be easy enough to understand what variables are involved in your code from their names.
-Therefore we need to give them clear names, but we also want to keep them concise so the code stays readable.
-There are no "hard and fast rules" here, and it's often a case of using your best judgment.
 
-Some useful tips for naming variables are:
+Therefore we need to give them clear names, but we also want to keep them concise so the code stays readable. There are no "hard and fast rules" here, and it's often a case of using your best judgment.
 
-- Short words are better than single character names. For example, if we were creating a variable to store the speed 
-to read a file, `s` (for 'speed') is not descriptive enough but `MBReadPerSecondAverageAfterLastFlushToLog` is too long 
-to read and prone to misspellings. `ReadSpeed` (or `read_speed`) would suffice.
-- If you are finding it difficult to come up with a variable name that is both short and descriptive, 
-go with the short version and use an inline comment to describe it further (more on those in the next section). 
-This guidance does not necessarily apply if your variable is a well-known constant in your domain - 
-for example, *c* represents the speed of light in physics.
-- Try to be descriptive where possible and avoid meaningless or funny names like `foo`, `bar`, `var`, `thing`, etc.
+> “There are only two hard things in Computer Science: cache invalidation and naming things.”  
+Phil Karlton
 
-There are also some restrictions to consider when naming variables in Python:
 
-- Only alphanumeric characters and underscores are permitted in variable names.
-- You cannot begin your variable names with a numerical character as this will raise a syntax error.
-Numerical characters can be included in a variable name, just not as the first character. For example, `read_speed1` is a valid variable name, but `1read_speed` isn't. (This behaviour may be different for other programming languages.)
-- Variable names are case sensitive. So `speed_of_light` and `Speed_Of_Light` are not the same.
-- Programming languages often have global pre-built functions, such as `input`, which you may accidentally overwrite 
-if you assign a variable with the same name and no longer be able to access the original `input` function. In this case, 
-opting for something like `input_data` would be preferable. Note that this behaviour may be explicitly disallowed in other 
-programming languages but is not in Python.
+
+Some useful tips for naming variables
+
+- Short words are better than single character names. For example, if we were creating a variable to store the speed to read a file, `s` (for 'speed') is not descriptive enough but `MBReadPerSecondAverageAfterLastFlushToLog` is too long to read and prone to misspellings. `ReadSpeed` (or `read_speed`) would suffice.  
+- If you are finding it difficult to come up with a variable name that is both short and descriptive, go with the short version and use an inline comment to describe it further (more on those in the next section).  
+This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  
+- Try to be descriptive where possible and avoid meaningless or funny names like `foo`, `bar`, `var`, `thing`, etc.  
+- Programming languages often have global pre-built functions, such as `input`, which you may accidentally overwrite if you assign a variable with the same name and no longer be able to access the original `input` function. In this case, opting for something like `input_data` would be preferable. 
 
 
 :::::: challenge
 
 ### Rename our variables to be more descriptive (5 min)
 
-Let's apply this to `eva_data_analysis.py`.
+Let's apply this to `eva_data_analysis.R`.  ## should this be my code v2.R?
 
 a. Edit the code as follows to use descriptive (and consistent) variable names:
 
@@ -191,153 +133,122 @@ a. Edit the code as follows to use descriptive (and consistent) variable names:
 b. What other variable names in our code would benefit from renaming? 
 Rename these too. 
 Hint: variables `w`, `t`, `tt` and `ttt` could also be renamed to be more descriptive.
+  - **Change `w` to `csv_writer`**: makes it clear this variable is a CSV writer object. Using "w" alone would more likely be interpreted as "width" or "weight".
+  - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
+  - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
+  - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
 c. Commit your changes to your repository. Remember to use an informative commit message.
 
 
 ::: solution
 
-a. 
-Updated code after renaming `data_f`, `data_t` and `g_file`:
 
-```python
-import json
-import csv
-import datetime as dt
-import matplotlib.pyplot as plt
-    
-# https://data.nasa.gov/resource/eva.json (with modifications)
-input_file = open('./eva-data.json', 'r', encoding='ascii')
-output_file = open('./eva-data.csv', 'w', encoding='utf-8')
-graph_file = './cumulative_eva_graph.png'
-        
-fieldnames = ("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
-    
-data=[]
-    
-for i in range(375):
-    line=input_file.readline()
-    print(line)
-    data.append(json.loads(line[1:-1]))
-#data.pop(0)
-## Comment out this bit if you don't want the spreadsheet
-    
-w=csv.writer(output_file)
-    
-time = []
-date =[]
-    
-j=0
-for i in data:
-    print(data[j])
-        # and this bit
-        w.writerow(data[j].values())
-        if 'duration' in data[j].keys():
-            tt=data[j]['duration']
-            if tt == '':
-                pass
-            else:
-                t=dt.datetime.strptime(tt,'%H:%M')
-                ttt = dt.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second).total_seconds()/(60*60)
-                print(t,ttt)
-                time.append(ttt)
-                if 'date' in data[j].keys():
-                    date.append(dt.datetime.strptime(data[j]['date'][0:10], '%Y-%m-%d'))
-                    #date.append(data[j]['date'][0:10])
-    
-                else:
-                    time.pop(0)
-        j+=1
-    
-t=[0]
-for i in time:
-    t.append(t[-1]+i)
-    
-date,time = zip(*sorted(zip(date, time)))
-    
-plt.plot(date,t[1:], 'ko-')
-plt.xlabel('Year')
-plt.ylabel('Total time spent in space to date (hours)')
-plt.tight_layout()
-plt.savefig(graph_file)
-plt.show()
-```
-b. 
-Variables `w`, `t`, `tt` and `ttt` could also be renamed to be more descriptive. We could, for example: 
+Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `w`, `t`, `tt` and `ttt` to be more descriptive. 
       
-- **Change `w` to `csv_writer`**: makes it clear this variable is a CSV writer object. Using "w" alone would more likely be interpreted as "width" or "weight".
-- **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
-- **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
-- **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
-    
-Updated code after renaming `w`, `t`, `tt` and `ttt`:
       
-```python
-import json
-import csv
-import datetime as dt
-import matplotlib.pyplot as plt
+```{r}
 
-# https://data.nasa.gov/resource/eva.json (with modifications)
-input_file = open('./eva-data.json', 'r', encoding='ascii')
-output_file = open('./eva-data.csv', 'w', encoding='utf-8')
-graph_file = './cumulative_eva_graph.png'
+# R translation of the provided Python script
+# - tidyverse-first approach
+# - variable renames applied:
+#   data_f -> input_file, data_t -> output_file, g_file -> graph_file
+#   w -> csv_writer, tt -> duration_str, t -> duration_dt, ttt -> duration_hours
 
+library(tidyverse)
+library(lubridate)
+library(jsonlite)
 
-fieldnames = ("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
+# Files
+input_file  <- "./eva-data.json"
+output_file <- "./eva-data.csv"
+graph_file  <- "./cumulative_eva_graph.png"
 
-data=[]
+# Expected output columns (keep in the same order as the Python "fieldnames" intent)
+fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
 
-for i in range(375):
-    line=input_file.readline()
-    print(line)
-    data.append(json.loads(line[1:-1]))
-#data.pop(0)
-## Comment out this bit if you don't want the spreadsheet
+# ---- Read JSON lines (first 375 lines), mimicking the Python loop ----
+raw_lines <- readr::read_lines(input_file, n_max = 375)
 
-csv_writer=csv.writer(output_file)
+# Python does: json.loads(line[1:-1]) (drops first and last char).
+# We'll do the same *conditionally* to avoid breaking valid JSON lines.
+trim_one_char_each_side <- function(x) {
+  if (nchar(x) >= 2) substr(x, 2, nchar(x) - 1) else x
+}
 
-time = []
-date =[]
+json_records <- raw_lines |>
+  keep(~ nzchar(.x)) |>
+  map(trim_one_char_each_side) |>
+  map(\(x) {
+    # Robust parsing: return NULL for lines that aren't valid JSON after trimming
+    tryCatch(jsonlite::fromJSON(x, simplifyVector = TRUE), error = function(e) NULL)
+  }) |>
+  compact()
 
-j=0
-for i in data:
-    print(data[j])
-    # and this bit
-    csv_writer.writerow(data[j].values())
-    if 'duration' in data[j].keys():
-        duration_str=data[j]['duration']
-        if duration_str == '':
-            pass
-        else:
-            duration_dt=dt.datetime.strptime(duration_str,'%H:%M')
-            duration_hours = dt.timedelta(hours=duration_dt.hour, minutes=duration_dt.minute, seconds=duration_dt.second).total_seconds()/(60*60)
-            print(duration_dt,duration_hours)
-            time.append(duration_hours)
-            if 'date' in data[j].keys():
-                date.append(dt.datetime.strptime(data[j]['date'][0:10], '%Y-%m-%d'))
-                #date.append(data[j]['date'][0:10])
+# Convert list of records to a tibble
+eva_tbl <- tibble::tibble(record = json_records) |>
+  tidyr::unnest_wider(record)
 
-            else:
-                time.pop(0)
-    j+=1
+# ---- Write CSV (analogous to csv_writer.writerow(data[j].values())) ----
+# The Python code writes raw "values()" order, which is not stable across dicts.
+# In R, we’ll write a stable, explicit column order:
+csv_writer <- eva_tbl |>
+  # try to match/standardize to the requested fieldnames where possible
+  # (these names may differ in your modified NASA export; adjust if needed)
+  rename(
+    `EVA #`    = any_of(c("EVA #", "eva", "eva_number", "eva_num")),
+    `Country`  = any_of(c("Country", "country")),
+    `Crew    ` = any_of(c("Crew    ", "Crew", "crew")),
+    `Vehicle`  = any_of(c("Vehicle", "vehicle")),
+    `Date`     = any_of(c("Date", "date")),
+    `Duration` = any_of(c("Duration", "duration")),
+    `Purpose`  = any_of(c("Purpose", "purpose"))
+  ) |>
+  # ensure all expected columns exist (create missing as NA)
+  mutate(across(setdiff(fieldnames, names(.)), ~ NA_character_)) |>
+  select(all_of(fieldnames))
 
-duration_dt=[0]
-for i in time:
-    duration_dt.append(duration_dt[-1]+i)
+readr::write_csv(csv_writer, output_file, na = "")
 
-date,time = zip(*sorted(zip(date, time)))
+# ---- Compute duration_hours and cumulative total; then plot ----
+plot_tbl <- csv_writer |>
+  transmute(
+    date = suppressWarnings(lubridate::ymd(str_sub(`Date`, 1, 10))),
+    duration_str = as.character(`Duration`)
+  ) |>
+  filter(!is.na(date), !is.na(duration_str), duration_str != "") |>
+  mutate(
+    # Parse "HH:MM" like Python's datetime.strptime(tt, "%H:%M")
+    duration_dt = suppressWarnings(lubridate::hm(duration_str)),
+    duration_hours = as.numeric(duration_dt) / 3600
+  ) |>
+  filter(!is.na(duration_hours)) |>
+  arrange(date) |>
+  mutate(cumulative_hours = cumsum(duration_hours))
 
-plt.plot(date,duration_dt[1:], 'ko-')
-plt.xlabel('Year')
-plt.ylabel('Total time spent in space to date (hours)')
-plt.tight_layout()
-plt.savefig(graph_file)
-plt.show()
+p <- ggplot(plot_tbl, aes(x = date, y = cumulative_hours)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    x = "Year",
+    y = "Total time spent in space to date (hours)"
+  ) +
+  theme_minimal()
+
+ggsave(
+  filename = graph_file,
+  plot = p,
+  width = 9,
+  height = 5,
+  dpi = 300
+)
+
+print(p)
+
 ```
 c. Let's commit our latest changes:
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.py
+(venv_spacewalks) $ git add eva_data_analysis.R
 (venv_spacewalks) $ git commit -m "Use descriptive variable names"
 (venv_spacewalks) $ git push origin main
 ```
@@ -351,10 +262,7 @@ There are more automated ways to close issues based on a commit/pull request tha
 
 ## Remove unused variables and imports
 
-Unused variables or import statements can cause confusion about what the code is doing, making it harder to 
-read and easier to introduce mistakes. Such things may seem harmless as they do not cause immediate syntax errors - but 
-they can potentially lead to subtle program logic errors, unexpected behavior, wrong results and issues later on - 
-making them especially tricky to detect and fix. Over time, this makes the codebase more fragile and harder to maintain and extend.
+Unused variables or import statements can cause confusion about what the code is doing, making it harder to read and easier to introduce mistakes. Such things may seem harmless as they do not cause immediate syntax errors - but they can potentially lead to subtle program logic errors, unexpected behavior, wrong results and issues later on making them especially tricky to detect and fix. Over time, this makes the codebase more fragile and harder to maintain and extend.
 
 :::::: challenge
 
@@ -368,73 +276,102 @@ Variable `fieldnames` (containing column names for CSV data file) is defined but
 
 Updated code:
 
-```python
-import json
-import csv
-import datetime as dt
-import matplotlib.pyplot as plt
+```{r}
 
-# https://data.nasa.gov/resource/eva.json (with modifications)
-input_file = open('./eva-data.json', 'r', encoding='ascii')
-output_file = open('./eva-data.csv', 'w', encoding='utf-8')
-graph_file = './cumulative_eva_graph.png'
+# R translation of the provided Python script
+# - tidyverse-first approach
+# - variable renames applied:
+#   data_f -> input_file, data_t -> output_file, g_file -> graph_file
+#   w -> csv_writer, tt -> duration_str, t -> duration_dt, ttt -> duration_hours
 
+library(tidyverse)
+library(lubridate)
+library(jsonlite)
 
-data=[]
+# Files
+input_file  <- "./eva-data.json"
+output_file <- "./eva-data.csv"
+graph_file  <- "./cumulative_eva_graph.png"
 
-for i in range(375):
-    line=input_file.readline()
-    print(line)
-    data.append(json.loads(line[1:-1]))
-#data.pop(0)
-## Comment out this bit if you don't want the spreadsheet
+# ---- Read JSON lines (first 375 lines), mimicking the Python loop ----
+raw_lines <- readr::read_lines(input_file, n_max = 375)
 
-csv_writer=csv.writer(output_file)
+# Python does: json.loads(line[1:-1]) (drops first and last char).
+# We'll do the same *conditionally* to avoid breaking valid JSON lines.
+trim_one_char_each_side <- function(x) {
+  if (nchar(x) >= 2) substr(x, 2, nchar(x) - 1) else x
+}
 
-time = []
-date =[]
+json_records <- raw_lines |>
+  keep(~ nzchar(.x)) |>
+  map(trim_one_char_each_side) |>
+  map(\(x) {
+    # Robust parsing: return NULL for lines that aren't valid JSON after trimming
+    tryCatch(jsonlite::fromJSON(x, simplifyVector = TRUE), error = function(e) NULL)
+  }) |>
+  compact()
 
-j=0
-for i in data:
-    print(data[j])
-    # and this bit
-    csv_writer.writerow(data[j].values())
-    if 'duration' in data[j].keys():
-        duration_str=data[j]['duration']
-        if duration_str == '':
-            pass
-        else:
-            duration_dt=dt.datetime.strptime(duration_str,'%H:%M')
-            duration_hours = dt.timedelta(hours=duration_dt.hour, minutes=duration_dt.minute, seconds=duration_dt.second).total_seconds()/(60*60)
-            print(duration_dt,duration_hours)
-            time.append(duration_hours)
-            if 'date' in data[j].keys():
-                date.append(dt.datetime.strptime(data[j]['date'][0:10], '%Y-%m-%d'))
-                #date.append(data[j]['date'][0:10])
+# Convert list of records to a tibble
+eva_tbl <- tibble(record = json_records) |>
+  tidyr::unnest_wider(record)
 
-            else:
-                time.pop(0)
-    j+=1
+# ---- Write CSV (analogous to csv_writer.writerow(data[j].values())) ----
+# NOTE: We intentionally do *not* force a fixed column schema here, to mirror the
+# Python behavior more closely (dict.values()) while still writing a usable CSV.
+csv_writer <- eva_tbl |>
+  rename(
+    `EVA #`    = any_of(c("EVA #", "eva", "eva_number", "eva_num")),
+    `Country`  = any_of(c("Country", "country")),
+    `Crew    ` = any_of(c("Crew    ", "Crew", "crew")),
+    `Vehicle`  = any_of(c("Vehicle", "vehicle")),
+    `Date`     = any_of(c("Date", "date")),
+    `Duration` = any_of(c("Duration", "duration")),
+    `Purpose`  = any_of(c("Purpose", "purpose"))
+  )
 
-duration_dt=[0]
-for i in time:
-    duration_dt.append(duration_dt[-1]+i)
+readr::write_csv(csv_writer, output_file, na = "")
 
-date,time = zip(*sorted(zip(date, time)))
+# ---- Compute duration_hours and cumulative total; then plot ----
+plot_tbl <- csv_writer |>
+  transmute(
+    date = suppressWarnings(lubridate::ymd(str_sub(`Date`, 1, 10))),
+    duration_str = as.character(`Duration`)
+  ) |>
+  filter(!is.na(date), !is.na(duration_str), duration_str != "") |>
+  mutate(
+    # Parse "HH:MM" like Python's datetime.strptime(tt, "%H:%M")
+    duration_dt = suppressWarnings(lubridate::hm(duration_str)),
+    duration_hours = as.numeric(duration_dt) / 3600
+  ) |>
+  filter(!is.na(duration_hours)) |>
+  arrange(date) |>
+  mutate(cumulative_hours = cumsum(duration_hours))
 
-plt.plot(date,duration_dt[1:], 'ko-')
-plt.xlabel('Year')
-plt.ylabel('Total time spent in space to date (hours)')
-plt.tight_layout()
-plt.savefig(graph_file)
-plt.show()
+p <- ggplot(plot_tbl, aes(x = date, y = cumulative_hours)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    x = "Year",
+    y = "Total time spent in space to date (hours)"
+  ) +
+  theme_minimal()
+
+ggsave(
+  filename = graph_file,
+  plot = p,
+  width = 9,
+  height = 5,
+  dpi = 300
+)
+
+print(p)
 
 ```
 
 Commit changes:
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.py
+(venv_spacewalks) $ git add eva_data_analysis.R
 (venv_spacewalks) $ git commit -m "Remove unused variable fieldname"
 (venv_spacewalks) $ git push origin main
 ```
@@ -445,9 +382,16 @@ Commit changes:
 :::::::::::::::::::::::::::::::: callout
 
 [Linters](https://glosario.carpentries.org/en/#linter) (static analysis tools) can be very helpful with tasks like this.
-Linters identify unused variables and unused imports among other useful tasks for formatting and making your code readable.
 
-Some common linters for Python include PyLint, Black, Ruff and Flake8.
+A linter is a tool that automatically checks your source code for problems without running it. For Python, linters mainly flag:
+	•	Style issues: formatting, naming conventions, line length, import order
+	•	Potential bugs: unused imports/variables, unreachable code, dubious comparisons, shadowing built-ins
+	•	Code smells / maintainability: overly complex functions, too many branches, duplicated logic
+	•	Sometimes security issues (depending on the tool)
+
+Linters usually produce warnings/errors with line numbers and (often) suggested fixes.
+
+For R, 	lintr, the standard R linter does static code analysis for style issues and potential problems, supports many editors (including RStudio/VS Code), and is configurable via a .lintr file. Alongside lintr, R programmers commonly use styler which auto-formats R code so you eliminate many lint issues by formatting consistently.
 
 ::::::::::::::::::::::::::::::::::::::::
 
@@ -467,6 +411,90 @@ This encourages developers to refactor the code into smaller, more meaningful fu
 The IDE understands the underlying structure of the code, which makes these complex operations simple and safe.
 ::::::::::::::::::::::::::::::::::::::::
 
+
+
+:::::::::::::::::::::::::::::::: callout
+How to install lintr and styler for RStudio
+
+1) Install the packages
+
+```{r}
+install.packages(c("lintr", "styler"))
+```
+
+2) Use lintr in RStudio (see issues in the Markers pane)
+
+Enable R diagnostics in RStudio
+
+RStudio can show lintr results in the Markers pane when diagnostics are enabled.
+  - Tools → Global Options… → Code → Diagnostics
+  - Check “Show diagnostics for R”
+
+Lint a file (results appear in Markers)
+
+From the Console:
+
+```{r}
+lintr::lint("path/to/file.R")
+```
+Then open Markers (in the pane that also shows Build/Git/etc.) to review findings
+
+Use the RStudio Addins
+
+lintr ships RStudio addins for linting the current source and the package. You can run them via:
+  - Tools → Addins → Browse Addins… → search "lintr"
+	-	Optional: bind keyboard shortcuts via Tools → Addins → Browse Addins → Keyboard Shortcuts (the lintr docs even suggest common bindings).
+
+3) Use styler in RStudio (auto-format code)
+
+RStudio Addins
+
+styler provides RStudio addins to:
+	-	style the active file
+	-	style the current package
+	-	style the highlighted selection  
+
+Find them at:
+	-	Tools → Addins → Browse Addins… → search “styler”
+
+
+A practical “RStudio workflow”
+	1.	Write code
+	2.	Run styler addin (format)
+	3.	Run lintr addin (lint) and fix anything meaningful
+	
+A minimal .lintr config file 
+
+```
+linters: lintr::linters_with_defaults(
+  # Keep the signal high; tune to taste.
+  line_length_linter = lintr::line_length_linter(100),
+
+  # Common readability/style checks that work well in both .R and R chunks in .qmd/.Rmd
+  object_name_linter = lintr::object_name_linter(),
+  spaces_left_parentheses_linter = lintr::spaces_left_parentheses_linter(),
+  spaces_inside_linter = lintr::spaces_inside_linter(),
+  trailing_whitespace_linter = lintr::trailing_whitespace_linter(),
+
+  # Catch likely mistakes without being too noisy
+  unused_import_linter = lintr::unused_import_linter()
+)
+
+# Exclude rendered/output directories typical of Quarto projects
+exclusions: list(
+  "_site/",
+  "_book/",
+  "_freeze/",
+  "docs/",
+  "site_libs/",
+  "renv/"
+)
+```
+
+
+::::::::::::::::::::::::::::::::::::::::
+
+#got this far 3/10/2026
 
 ## Use third-party libraries
 
