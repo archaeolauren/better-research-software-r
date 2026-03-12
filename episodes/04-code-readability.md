@@ -19,7 +19,7 @@ After completing this episode, participants should be able to:
 - Import third-party libraries at the top of a script
 - Choose function and variable names that help explain the purpose of the function or variable
 - Organize code into reusable functions that achieve a singular purpose
-- Write informative comments and roxygen2 comments to provide more detail about what the code is doing
+- Write informative comments and `roxygen2` comments to provide more detail about what the code is doing
 
 :::
 
@@ -68,7 +68,7 @@ Let’s look at our code again. One thing that stands out is that we’re callin
 
 Our code after the modification should look like the following.
 
-```{r}
+```r
 
 # Base R translation of the original Python script
 # Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
@@ -239,7 +239,7 @@ c. Commit your changes to your repository. Remember to use an informative commit
 Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `w`, `t`, `tt` and `ttt` to be more descriptive. 
       
       
-```{r}
+```r
 
 # Base R translation of the original Python script
 # Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
@@ -375,7 +375,7 @@ Variable `fieldnames` (containing column names for CSV data file) is defined but
 
 Updated code:
 
-```{r}
+```r
 
 # Base R translation of the original Python script
 # Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
@@ -529,7 +529,7 @@ How to install lintr and styler for RStudio
 
 1) Install the packages
 
-```{r}
+```r
 install.packages(c("lintr", "styler"))
 ```
 
@@ -545,7 +545,7 @@ Lint a file (results appear in Markers)
 
 From the Console:
 
-```{r}
+```r
 lintr::lint("path/to/file.R")
 ```
 Then open Markers (in the pane that also shows Build/Git/etc.) to review findings
@@ -611,11 +611,11 @@ Our script currently reads the data line-by-line from the JSON data file and use
 
 # question to the team. I already had to use a dataframe for ggplot. Should we use base R instead? 
 
-By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone. The main functionality of our code can be rewritten as follows using data frames from base R or tibbles from the tidyverse package to load and manipulate the data in data frames.  
+By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone. The main functionality of our code can be rewritten as follows using data frames from base R or tibbles from the `tidyverse` package to load and manipulate the data in data frames.  
 
 First, we need to install this dependency into our virtual environment.
 
-```{r}
+```r
 renv::install("tidyverse")
 #run this once to download tidyverse locally and add it to the lockfile 
 library(tidyverse) #run this every time you start a session 
@@ -623,7 +623,7 @@ library(tidyverse) #run this every time you start a session
 
 Then we will edit the code to use `tibble`. For the sake of time in the workshop, we will give you the updated code. The code should now look like:
 
-```{r}
+```r
 library(tidyverse) #tidyverse "contains" ggplot2
 library(jsonlite)
 library(lubridate)
@@ -697,7 +697,7 @@ We have committed the code and the environment changes together since they are r
 
 Commenting is a very useful practice to help convey the context of the code. It can be helpful as a reminder for your future self or your collaborators as to why code is written in a certain way, how it is achieving a specific task, or the real-world implications of your code.
 
-R’s comment syntax is simple and familiar if you’ve used Python or shell scripting: a # starts a comment that runs to the end of the line, and there’s no distinct multi-line comment token in the base language—multi-line commentary is just multiple # lines. That contrasts with languages like C, C++, Java, and JavaScript, which typically have both // for single-line comments and /* … */ for block comments, and with SQL, which often supports -- and /* … */. Python is closest to R in practice (# for line comments), but Python also has the convention of triple-quoted strings used as docstrings, which can function like structured, extractable documentation; R’s comparable “docstring” mechanism is usually done via roxygen2 comments (#' ...) in packages rather than a core language feature.
+R’s comment syntax is simple and familiar if you’ve used Python or shell scripting: a # starts a comment that runs to the end of the line, and there’s no distinct multi-line comment token in the base language—multi-line commentary is just multiple # lines. That contrasts with languages like C, C++, Java, and JavaScript, which typically have both // for single-line comments and /* … */ for block comments, and with SQL, which often supports -- and /* … */. Python is closest to R in practice (# for line comments), but Python also has the convention of triple-quoted strings used as docstrings, which can function like structured, extractable documentation; R’s comparable “docstring” mechanism is usually done via `roxygen2` comments (#' ...) in packages rather than a core language feature.
 
 From the official [R documentation](https://cran.r-project.org/doc/manuals/r-patched/R-lang.html?utm_source=chatgpt.com#Comments-1): 
 
@@ -710,7 +710,7 @@ The [Tidyverse Style] Guide(https://style.tidyverse.org/functions.html#comments)
 
 > In code, use comments to explain the “why” not the “what” or “how”. Each line of a comment should begin with the comment symbol and a single space: #.
 
-```{R}
+```r
 x <- 5  # In R, "inline comments"" begin with the `#` symbol and at least one space
 
 # this is a single-line comment
@@ -732,7 +732,7 @@ If your code is too complex for other programmers to understand, consider rewrit
 
 ### Examples of unhelpful comments
 
-```{r}
+```r
 statetax <- 1.0625  # Assigns the float 1.0625 to the variable 'statetax'
 citytax <- 1.01  # Assigns the float 1.01 to the variable 'citytax'
 specialtax <- 1.01  # Assigns the float 1.01 to the variable 'specialtax'
@@ -742,7 +742,7 @@ The comments in this code simply tell us what the code does, which is easy enoug
 
 ### Examples of helpful comments
 
-```{r}
+```r
 statetax <- 1.0625  # State sales tax rate is 6.25% through Jan. 1
 citytax <- 1.01  # City sales tax rate is 1% through Jan. 1
 specialtax <- 1.01  # Special sales tax rate is 1% through Jan. 1
@@ -765,7 +765,7 @@ b. Commit your changes to your repository. Remember to use an informative commit
 
 Some good comments may look like the example below.
 
-```{r}
+```r
 
 library(tidyverse)
 library(jsonlite)
@@ -871,7 +871,7 @@ You will need to share the code below with the learners via copy-and-paste eithe
 
 After the initial refactoring, our code may look something like the following.
 
-```{r}
+```r
 
 library(tidyverse)
 library(jsonlite)
@@ -935,7 +935,7 @@ print(p)
 ```
 
 We have chosen to create functions for reading in and writing out data files since this is a very common task within research software.
-While these functions do not contain that many lines of code because they rely on the jsonlite and readr packages that do all the complex data reading, converting and writing operations, it can be useful to package these steps together into reusable functions if you need to read in or write out a lot of similarly structured files and process them in the same way.
+While these functions do not contain that many lines of code because they rely on the `jsonlite` and `readr` packages that do all the complex data reading, converting and writing operations, it can be useful to package these steps together into reusable functions if you need to read in or write out a lot of similarly structured files and process them in the same way.
 
 We can further simplify the main part of our code by extracting the code to plot a graph into a separate function `plot_cumulative_time_in_space`.
 Let's do that as an exercise.
@@ -956,7 +956,7 @@ Make sure to commit and push your changes.
 
 After extracting the code to plot a graph into a separate function, our code may look something like the following:
 
-```{r}
+```r
 
 library(tidyverse)
 library(jsonlite)
@@ -1024,19 +1024,19 @@ plot_cumulative_time_in_space(eva_tbl, graph_file)
 
 :::
 
-## Use roxygen2 comments to document functions
+## Use `roxygen2` comments to document functions
 
 Now that we’ve written a few functions, it’s time to document them so we can quickly remember what they do. That way, someone reading this code later can understand the intent without having to reverse-engineer the implementation.
 
-In R, there isn’t a built-in “docstring” feature in the same way Python has. In scripts, the usual approach is to write clear comments directly above a function. In packages, the standard is to use [roxygen2](https://roxygen2.r-lib.org/): a structured comment block (lines starting with #') that describes what the function does, what inputs it expects, what it returns, and any important edge cases.
+In R, there isn’t a built-in “docstring” feature in the same way Python has. In scripts, the usual approach is to write clear comments directly above a function. In packages, the standard is to use [`roxygen2`](https://`roxygen2`.r-lib.org/): a structured comment block (lines starting with #') that describes what the function does, what inputs it expects, what it returns, and any important edge cases.
 
 Good function documentation improves readability by making the purpose of the code explicit. It also makes functions easier to reuse: when the documentation clearly spells out inputs and outputs, you can call the function elsewhere with confidence—without re-reading the whole body to figure out what it needs and what it produces.
 
-With roxygen2, the documentation is written immediately above the function definition using #' comments, and tooling can turn that into the help text you see via ?function_name when you’re working in a package. That said, you can still use roxygen-style comments even if you’re not building a formal package. In a regular project, this looks like adopting #' blocks as a consistent “docstring convention” in your .R scripts (or in a dedicated R/ folder), using tags like @param, @return, and @examples to standardize what you record. You won’t automatically get ?my_function help pages unless you generate Rd files as part of a package build, but you still gain a structured, readable, and machine-friendly format that’s easy to search and maintain—and if the project ever does become a package, most of the documentation work is already done.
+With `roxygen2`, the documentation is written immediately above the function definition using #' comments, and tooling can turn that into the help text you see via ?function_name when you’re working in a package. That said, you can still use roxygen-style comments even if you’re not building a formal package. In a regular project, this looks like adopting #' blocks as a consistent “docstring convention” in your .R scripts (or in a dedicated R/ folder), using tags like @param, @return, and @examples to standardize what you record. You won’t automatically get ?my_function help pages unless you generate Rd files as part of a package build, but you still gain a structured, readable, and machine-friendly format that’s easy to search and maintain—and if the project ever does become a package, most of the documentation work is already done.
 
 ### Example of a single-line docstring
 
-```{r}
+```r
 
 add <- function(x, y) {
   # Add two numbers together
@@ -1047,7 +1047,7 @@ add <- function(x, y) {
 
 ### Example of a multi-line docstring
 
-```{r}
+```r
 
 #' Add two numbers together
 #'
@@ -1063,22 +1063,22 @@ add <- function(x, y) {
 
 ```
 
-Some projects may have their own guidelines on how to write roxygen2 comments, such as [The Tidyverse Style Guide ](https://style.tidyverse.org/documentation.html). If you are contributing code to a wider project or community, try to follow the guidelines and standards they provide 
+Some projects may have their own guidelines on how to write `roxygen2` comments, such as [The Tidyverse Style Guide ](https://style.tidyverse.org/documentation.html). If you are contributing code to a wider project or community, try to follow the guidelines and standards they provide 
 for code style.
 
-As your code grows and becomes more complex, the roxygen2 comments can form the content of a reference guide allowing developers to quickly look up how to use the APIs, functions, and classes defined in your codebase.
-In R, it’s common to use tooling that extracts function documentation from your source and publishes it as a browsable website, so people can learn how to use your code without cloning the repo or reading the raw files. For package-style documentation written with roxygen2, a typical workflow is to generate reference pages from your #' comments and build a site with pkgdown, which produces a documentation website from your package and its help files.
+As your code grows and becomes more complex, the `roxygen2` comments can form the content of a reference guide allowing developers to quickly look up how to use the APIs, functions, and classes defined in your codebase.
+In R, it’s common to use tooling that extracts function documentation from your source and publishes it as a browsable website, so people can learn how to use your code without cloning the repo or reading the raw files. For package-style documentation written with `roxygen2`, a typical workflow is to generate reference pages from your #' comments and build a site with pkgdown, which produces a documentation website from your package and its help files.
 
-Let's write roxygen2 comments for the function `read_json_to_dataframe` we introduced in the previous exercise. Remember, questions we want to answer when writing the roxygen2 comments include:
+Let's write `roxygen2` comments for the function `read_json_to_dataframe` we introduced in the previous exercise. Remember, questions we want to answer when writing the `roxygen2` comments include:
 
 - What the function does?
 - What kind of inputs does the function take? Are they required or optional? Do they have default values?
 - What output will the function produce?
 - What exceptions/errors, if any, it can produce?
 
-Our `read_json_to_dataframe` function fully described by the roxygen2 comments may look like:
+Our `read_json_to_dataframe` function fully described by the `roxygen2` comments may look like:
 
-```{r}
+```r
 
 #' Read EVA data from a JSON file into a tibble
 #'
@@ -1102,17 +1102,17 @@ read_json_to_dataframe <- function(input_file) {
 
 :::::: challenge
 
-### Writing roxygen2 comments (5 min)
+### Writing `roxygen2` comments (5 min)
 
-Write roxygen2 comments for the functions `write_dataframe_to_csv` and `plot_cumulative_time_in_space` we introduced earlier.
+Write `roxygen2` comments for the functions `write_dataframe_to_csv` and `plot_cumulative_time_in_space` we introduced earlier.
 
 ::: solution
 
 ### Solution
 
-Our `write_dataframe_to_csv` function fully described by its roxygen2 comments may look like:
+Our `write_dataframe_to_csv` function fully described by its `roxygen2` comments may look like:
 
-```{r}
+```r
 
 #' Clean an EVA dataframe and write it to CSV
 #'
@@ -1146,9 +1146,9 @@ write_dataframe_to_csv <- function(df, output_file) {
 
 ```
 
-Our `plot_cumulative_time_in_space` function fully described by its roxygen2 comments may look like:
+Our `plot_cumulative_time_in_space` function fully described by its `roxygen2` comments may look like:
 
-```{r}
+```r
 
 
 #' Plot cumulative EVA time in space and save the figure
@@ -1204,7 +1204,7 @@ plot_cumulative_time_in_space <- function(df, graph_file) {
 
 Finally, our code may look something like the following:
 
-```{r}
+```r
 
 # EVA cumulative time pipeline (tidyverse-first, with reusable functions + roxygen-style docs)
 
@@ -1332,7 +1332,7 @@ Good code readability brings many benefits to software development. It makes cod
 
 Integrated development environments (IDEs) can further improve readability by surfacing issues early through built-in or integrated static analysis tools (linters). Linters flag common problems and style violations as you write code, which helps you address issues immediately rather than discovering them later in the development cycle.
 
-Case in point, in RStudio, you can add roxygen2 documentation blocks quickly using built-in helpers. After installing and loading roxygen2, place your cursor inside (or immediately above) a function and use Code → Insert Roxygen Skeleton to generate a template comment block with #' lines and common tags like @param and @return. RStudio will pre-populate the parameter list based on the function signature, so you can focus on filling in descriptions and examples. Many people also bind a keyboard shortcut to “Insert Roxygen Skeleton” so documenting functions becomes part of the normal edit cycle, and then run Document (commonly via devtools) to regenerate the help files when working in a package.
+Case in point, in RStudio, you can add `roxygen2` documentation blocks quickly using built-in helpers. After installing and loading `roxygen2`, place your cursor inside (or immediately above) a function and use Code → Insert Roxygen Skeleton to generate a template comment block with #' lines and common tags like @param and @return. RStudio will pre-populate the parameter list based on the function signature, so you can focus on filling in descriptions and examples. Many people also bind a keyboard shortcut to “Insert Roxygen Skeleton” so documenting functions becomes part of the normal edit cycle, and then run Document (commonly via devtools) to regenerate the help files when working in a package.
 
 :::::: spoiler
 
@@ -1356,7 +1356,7 @@ Also check the [full reference set](learners/reference.md#litref) for the course
 
 	-	Readable code is easier to understand, maintain, debug, and extend (reuse), which saves time and effort.
 	-	Choosing descriptive variable and function names communicates intent more clearly.
-	-	Using roxygen2 comments adds context and helps others understand why the code exists, not just what it does.
+	-	Using `roxygen2` comments adds context and helps others understand why the code exists, not just what it does.
 	-	Use packages for common functionality to avoid duplicating work.
 		Refactor repeated logic into small, reusable functions. This improves readability by making responsibilities clear, compartmentalizing what each section does, and isolating code that can be reused elsewhere.
 
