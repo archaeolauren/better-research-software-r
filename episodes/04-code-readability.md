@@ -68,11 +68,107 @@ Let’s look at our code again. One thing that stands out is that we’re callin
 
 Our code after the modification should look like the following.
 
-```r
+```{r}
 
-library()
+# Base R translation of the original Python script
+# Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
+# IMPORTANT: This JSON file is a single JSON array, so we parse it in one shot.
 
-#the rest of the code goes below 
+library(jsonlite)
+library(ggplot2)
+
+# https://data.nasa.gov/resource/eva.json (with modifications)
+data_f <- file("./eva-data.json", open = "r", encoding = "ASCII")
+data_t <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
+g_file <- "./cumulative_eva_graph.png"
+
+fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
+
+# Read the whole JSON array (list of records)
+data <- jsonlite::fromJSON(readLines(data_f, warn = FALSE), simplifyVector = FALSE)
+
+w <- function(row_values) {
+  writeLines(paste(row_values, collapse = ","), con = data_t)
+}
+
+time <- c()
+date <- as.POSIXct(character())
+
+j <- 1
+for (i in data) {
+  print(data[[j]])
+
+  # Write raw values (similar intent to dict.values())
+  w(unlist(data[[j]], use.names = FALSE))
+
+  if ("duration" %in% names(data[[j]])) {
+    tt <- data[[j]][["duration"]]
+
+    if (tt == "") {
+      # pass
+    } else {
+      # Parse "H:MM" or "HH:MM" and convert to hours
+      t <- strptime(tt, format = "%H:%M", tz = "UTC")
+
+      # If hour parsing fails because the hour isn't zero-padded (e.g. "0:36"),
+      # pad it and try again (Python's strptime accepts "0:36"; R can be pickier).
+      if (is.na(t)[1]) {
+        tt2 <- sub("^([0-9]):", "0\\1:", tt)
+        t <- strptime(tt2, format = "%H:%M", tz = "UTC")
+      }
+
+      ttt <- (as.numeric(t$hour) * 3600 + as.numeric(t$min) * 60 + as.numeric(t$sec)) / (60 * 60)
+      print(t)
+      print(ttt)
+
+      time <- c(time, ttt)
+
+      if ("date" %in% names(data[[j]])) {
+        # Take first 10 chars: YYYY-MM-DD
+        date_str <- substr(data[[j]][["date"]], 1, 10)
+        date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
+      } else {
+        # Python had time.pop(0); mimic by dropping the first element
+        if (length(time) > 0) time <- time[-1]
+      }
+    }
+  }
+
+  j <- j + 1
+}
+
+t <- c(0)
+for (i in time) {
+  t <- c(t, t[length(t)] + i)
+}
+
+# date, time = zip(*sorted(zip(date, time)))
+ord <- order(date)
+date <- date[ord]
+time <- time[ord]
+
+# Build data for ggplot (plot uses cumulative vector t without leading 0)
+plot_df <- data.frame(
+  date = date,
+  cumulative_time = t[-1]
+)
+
+p <- ggplot(plot_df, aes(x = date, y = cumulative_time)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    x = "Year",
+    y = "Total time spent in space to date (hours)"
+  ) +
+  theme_minimal()
+
+ggsave(filename = g_file, plot = p, width = 9, height = 5, dpi = 300)
+print(p)
+
+# Close files
+close(data_f)
+close(data_t)
+
 
 ```
 
@@ -84,7 +180,7 @@ Let's make sure we commit our changes.
 ```
 ## Rules for variable names in R
 
-Check the [official documentation](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#R-commands_002c-case-sensitivity_002c-etc_002e)
+Check the [official documentation](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#R-commands_002c-case-sensitivity_002c-etc_002e). You can also find useful the [Tidyverse Style Guide](https://style.tidyverse.org/).
 
 - Only alphanumeric characters, dot, and underscores are permitted in variable names.  
 - Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
@@ -105,7 +201,6 @@ Therefore we need to give them clear names, but we also want to keep them concis
 
 > “There are only two hard things in Computer Science: cache invalidation and naming things.”  
 Phil Karlton
-
 
 
 Some useful tips for naming variables
@@ -148,101 +243,107 @@ Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables
       
 ```{r}
 
-# R translation of the provided Python script
-# - tidyverse-first approach
-# - variable renames applied:
-#   data_f -> input_file, data_t -> output_file, g_file -> graph_file
-#   w -> csv_writer, tt -> duration_str, t -> duration_dt, ttt -> duration_hours
+# Base R translation of the original Python script
+# Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
+# JSON file is a single JSON array, so we parse it in one shot.
 
-library(tidyverse)
-library(lubridate)
 library(jsonlite)
+library(ggplot2)
 
-# Files
-input_file  <- "./eva-data.json"
-output_file <- "./eva-data.csv"
+# https://data.nasa.gov/resource/eva.json (with modifications)
+input_file  <- file("./eva-data.json", open = "r", encoding = "ASCII")
+output_file <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
 graph_file  <- "./cumulative_eva_graph.png"
 
-# Expected output columns (keep in the same order as the Python "fieldnames" intent)
 fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
 
-# ---- Read JSON lines (first 375 lines), mimicking the Python loop ----
-raw_lines <- readr::read_lines(input_file, n_max = 375)
+# Read the whole JSON array (list of records)
+data <- jsonlite::fromJSON(readLines(input_file, warn = FALSE), simplifyVector = FALSE)
 
-# Python does: json.loads(line[1:-1]) (drops first and last char).
-# We'll do the same *conditionally* to avoid breaking valid JSON lines.
-trim_one_char_each_side <- function(x) {
-  if (nchar(x) >= 2) substr(x, 2, nchar(x) - 1) else x
+# Comment out this bit if you don't want the spreadsheet
+csv_writer <- function(row_values) {
+  writeLines(paste(row_values, collapse = ","), con = output_file)
 }
 
-json_records <- raw_lines |>
-  keep(~ nzchar(.x)) |>
-  map(trim_one_char_each_side) |>
-  map(\(x) {
-    # Robust parsing: return NULL for lines that aren't valid JSON after trimming
-    tryCatch(jsonlite::fromJSON(x, simplifyVector = TRUE), error = function(e) NULL)
-  }) |>
-  compact()
+time <- c()
+date <- as.POSIXct(character())
 
-# Convert list of records to a tibble
-eva_tbl <- tibble::tibble(record = json_records) |>
-  tidyr::unnest_wider(record)
+j <- 1
+for (i in data) {
+  print(data[[j]])
 
-# ---- Write CSV (analogous to csv_writer.writerow(data[j].values())) ----
-# The Python code writes raw "values()" order, which is not stable across dicts.
-# In R, we’ll write a stable, explicit column order:
-csv_writer <- eva_tbl |>
-  # try to match/standardize to the requested fieldnames where possible
-  # (these names may differ in your modified NASA export; adjust if needed)
-  rename(
-    `EVA #`    = any_of(c("EVA #", "eva", "eva_number", "eva_num")),
-    `Country`  = any_of(c("Country", "country")),
-    `Crew    ` = any_of(c("Crew    ", "Crew", "crew")),
-    `Vehicle`  = any_of(c("Vehicle", "vehicle")),
-    `Date`     = any_of(c("Date", "date")),
-    `Duration` = any_of(c("Duration", "duration")),
-    `Purpose`  = any_of(c("Purpose", "purpose"))
-  ) |>
-  # ensure all expected columns exist (create missing as NA)
-  mutate(across(setdiff(fieldnames, names(.)), ~ NA_character_)) |>
-  select(all_of(fieldnames))
+  # Write raw values (similar intent to dict.values())
+  csv_writer(unlist(data[[j]], use.names = FALSE))
 
-readr::write_csv(csv_writer, output_file, na = "")
+  if ("duration" %in% names(data[[j]])) {
+    duration_str <- data[[j]][["duration"]]
 
-# ---- Compute duration_hours and cumulative total; then plot ----
-plot_tbl <- csv_writer |>
-  transmute(
-    date = suppressWarnings(lubridate::ymd(str_sub(`Date`, 1, 10))),
-    duration_str = as.character(`Duration`)
-  ) |>
-  filter(!is.na(date), !is.na(duration_str), duration_str != "") |>
-  mutate(
-    # Parse "HH:MM" like Python's datetime.strptime(tt, "%H:%M")
-    duration_dt = suppressWarnings(lubridate::hm(duration_str)),
-    duration_hours = as.numeric(duration_dt) / 3600
-  ) |>
-  filter(!is.na(duration_hours)) |>
-  arrange(date) |>
-  mutate(cumulative_hours = cumsum(duration_hours))
+    if (duration_str == "") {
+      # pass
+    } else {
+      # Parse "H:MM" or "HH:MM" and convert to hours
+      duration_dt <- strptime(duration_str, format = "%H:%M", tz = "UTC")
 
-p <- ggplot(plot_tbl, aes(x = date, y = cumulative_hours)) +
-  geom_line() +
+      # Python's strptime accepts "0:36"; R can be pickier, so pad if needed.
+      if (is.na(duration_dt)[1]) {
+        duration_str2 <- sub("^([0-9]):", "0\\1:", duration_str)
+        duration_dt <- strptime(duration_str2, format = "%H:%M", tz = "UTC")
+      }
+
+      duration_hours <- (as.numeric(duration_dt$hour) * 3600 +
+                         as.numeric(duration_dt$min) * 60 +
+                         as.numeric(duration_dt$sec)) / (60 * 60)
+
+      print(duration_dt)
+      print(duration_hours)
+
+      time <- c(time, duration_hours)
+
+      if ("date" %in% names(data[[j]])) {
+        # Take first 10 chars: YYYY-MM-DD
+        date_str <- substr(data[[j]][["date"]], 1, 10)
+        date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
+      } else {
+        # Python had time.pop(0); mimic by dropping the first element
+        if (length(time) > 0) time <- time[-1]
+      }
+    }
+  }
+
+  j <- j + 1
+}
+
+cumulative_hours <- c(0)
+for (i in time) {
+  cumulative_hours <- c(cumulative_hours, cumulative_hours[length(cumulative_hours)] + i)
+}
+
+# date, time = zip(*sorted(zip(date, time)))
+ord <- order(date)
+date <- date[ord]
+time <- time[ord]
+
+# Build data for ggplot (plot uses cumulative vector without leading 0)
+plot_df <- data.frame(
+  date = date,
+  cumulative_hours = cumulative_hours[-1]
+)
+
+p <- ggplot(plot_df, aes(x = date, y = cumulative_hours)) +
   geom_point() +
+  geom_line() +
   labs(
     x = "Year",
     y = "Total time spent in space to date (hours)"
   ) +
   theme_minimal()
 
-ggsave(
-  filename = graph_file,
-  plot = p,
-  width = 9,
-  height = 5,
-  dpi = 300
-)
-
+ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
+
+# Close files
+close(input_file)
+close(output_file)
 
 ```
 c. Let's commit our latest changes:
@@ -278,93 +379,105 @@ Updated code:
 
 ```{r}
 
-# R translation of the provided Python script
-# - tidyverse-first approach
-# - variable renames applied:
-#   data_f -> input_file, data_t -> output_file, g_file -> graph_file
-#   w -> csv_writer, tt -> duration_str, t -> duration_dt, ttt -> duration_hours
+# Base R translation of the original Python script
+# Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
+# JSON file is a single JSON array, so we parse it in one shot.
 
-library(tidyverse)
-library(lubridate)
 library(jsonlite)
+library(ggplot2)
 
-# Files
-input_file  <- "./eva-data.json"
-output_file <- "./eva-data.csv"
+# https://data.nasa.gov/resource/eva.json (with modifications)
+input_file  <- file("./eva-data.json", open = "r", encoding = "ASCII")
+output_file <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
 graph_file  <- "./cumulative_eva_graph.png"
 
-# ---- Read JSON lines (first 375 lines), mimicking the Python loop ----
-raw_lines <- readr::read_lines(input_file, n_max = 375)
+# Read the whole JSON array (list of records)
+data <- jsonlite::fromJSON(readLines(input_file, warn = FALSE), simplifyVector = FALSE)
 
-# Python does: json.loads(line[1:-1]) (drops first and last char).
-# We'll do the same *conditionally* to avoid breaking valid JSON lines.
-trim_one_char_each_side <- function(x) {
-  if (nchar(x) >= 2) substr(x, 2, nchar(x) - 1) else x
+# Comment out this bit if you don't want the spreadsheet
+csv_writer <- function(row_values) {
+  writeLines(paste(row_values, collapse = ","), con = output_file)
 }
 
-json_records <- raw_lines |>
-  keep(~ nzchar(.x)) |>
-  map(trim_one_char_each_side) |>
-  map(\(x) {
-    # Robust parsing: return NULL for lines that aren't valid JSON after trimming
-    tryCatch(jsonlite::fromJSON(x, simplifyVector = TRUE), error = function(e) NULL)
-  }) |>
-  compact()
+time <- c()
+date <- as.POSIXct(character())
 
-# Convert list of records to a tibble
-eva_tbl <- tibble(record = json_records) |>
-  tidyr::unnest_wider(record)
+j <- 1
+for (i in data) {
+  print(data[[j]])
 
-# ---- Write CSV (analogous to csv_writer.writerow(data[j].values())) ----
-# NOTE: We intentionally do *not* force a fixed column schema here, to mirror the
-# Python behavior more closely (dict.values()) while still writing a usable CSV.
-csv_writer <- eva_tbl |>
-  rename(
-    `EVA #`    = any_of(c("EVA #", "eva", "eva_number", "eva_num")),
-    `Country`  = any_of(c("Country", "country")),
-    `Crew    ` = any_of(c("Crew    ", "Crew", "crew")),
-    `Vehicle`  = any_of(c("Vehicle", "vehicle")),
-    `Date`     = any_of(c("Date", "date")),
-    `Duration` = any_of(c("Duration", "duration")),
-    `Purpose`  = any_of(c("Purpose", "purpose"))
-  )
+  # Write raw values (similar intent to dict.values())
+  csv_writer(unlist(data[[j]], use.names = FALSE))
 
-readr::write_csv(csv_writer, output_file, na = "")
+  if ("duration" %in% names(data[[j]])) {
+    duration_str <- data[[j]][["duration"]]
 
-# ---- Compute duration_hours and cumulative total; then plot ----
-plot_tbl <- csv_writer |>
-  transmute(
-    date = suppressWarnings(lubridate::ymd(str_sub(`Date`, 1, 10))),
-    duration_str = as.character(`Duration`)
-  ) |>
-  filter(!is.na(date), !is.na(duration_str), duration_str != "") |>
-  mutate(
-    # Parse "HH:MM" like Python's datetime.strptime(tt, "%H:%M")
-    duration_dt = suppressWarnings(lubridate::hm(duration_str)),
-    duration_hours = as.numeric(duration_dt) / 3600
-  ) |>
-  filter(!is.na(duration_hours)) |>
-  arrange(date) |>
-  mutate(cumulative_hours = cumsum(duration_hours))
+    if (duration_str == "") {
+      # pass
+    } else {
+      # Parse "H:MM" or "HH:MM" and convert to hours
+      duration_dt <- strptime(duration_str, format = "%H:%M", tz = "UTC")
 
-p <- ggplot(plot_tbl, aes(x = date, y = cumulative_hours)) +
-  geom_line() +
+      # Python's strptime accepts "0:36"; R can be pickier, so pad if needed.
+      if (is.na(duration_dt)[1]) {
+        duration_str2 <- sub("^([0-9]):", "0\\1:", duration_str)
+        duration_dt <- strptime(duration_str2, format = "%H:%M", tz = "UTC")
+      }
+
+      duration_hours <- (as.numeric(duration_dt$hour) * 3600 +
+                         as.numeric(duration_dt$min) * 60 +
+                         as.numeric(duration_dt$sec)) / (60 * 60)
+
+      print(duration_dt)
+      print(duration_hours)
+
+      time <- c(time, duration_hours)
+
+      if ("date" %in% names(data[[j]])) {
+        # Take first 10 chars: YYYY-MM-DD
+        date_str <- substr(data[[j]][["date"]], 1, 10)
+        date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
+      } else {
+        # Python had time.pop(0); mimic by dropping the first element
+        if (length(time) > 0) time <- time[-1]
+      }
+    }
+  }
+
+  j <- j + 1
+}
+
+cumulative_hours <- c(0)
+for (i in time) {
+  cumulative_hours <- c(cumulative_hours, cumulative_hours[length(cumulative_hours)] + i)
+}
+
+# date, time = zip(*sorted(zip(date, time)))
+ord <- order(date)
+date <- date[ord]
+time <- time[ord]
+
+# Build data for ggplot (plot uses cumulative vector without leading 0)
+plot_df <- data.frame(
+  date = date,
+  cumulative_hours = cumulative_hours[-1]
+)
+
+p <- ggplot(plot_df, aes(x = date, y = cumulative_hours)) +
   geom_point() +
+  geom_line() +
   labs(
     x = "Year",
     y = "Total time spent in space to date (hours)"
   ) +
   theme_minimal()
 
-ggsave(
-  filename = graph_file,
-  plot = p,
-  width = 9,
-  height = 5,
-  dpi = 300
-)
-
+ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
+
+# Close files
+close(input_file)
+close(output_file)
 
 ```
 
@@ -494,65 +607,89 @@ exclusions: list(
 
 ::::::::::::::::::::::::::::::::::::::::
 
-#got this far 3/10/2026
+## Use packages 
 
-## Use third-party libraries
+Our script currently reads the data line-by-line from the JSON data file and uses custom code to manipulate the data. Variables of interest are stored in lists but there are more suitable data structures (e.g. dataframes or tibbles) to store data in our case.
 
-Our script currently reads the data line-by-line from the JSON data file and uses custom code to manipulate the data.
-Variables of interest are stored in lists but there are more suitable data structures (e.g. `pandas`' dataframe) to store data in our case.
-By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone.
+# question to the team. I already had to use a dataframe for ggplot. Should we use base R instead? 
 
-The main functionality of our code can be rewritten as follows using the `pandas` library to load and manipulate the data in data frames.
+By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone. The main functionality of our code can be rewritten as follows using data frames from base R or tibbles from the tidyverse package to load and manipulate the data in data frames.  
 
 First, we need to install this dependency into our virtual environment.
 
-```bash
-(venv_spacewalks) $ python3 -m pip install pandas
+```{r}
+renv::install("tidyverse")
+#run this once to download tidyverse locally and add it to the lockfile 
+library(tidyverse) #run this every time you start a session 
 ```
 
-Then we will edit the code to use `pandas`.
-For the sake of time in the workshop, we will give you the updated code.
-The code should now look like:
+Then we will edit the code to use `tibble`. For the sake of time in the workshop, we will give you the updated code. The code should now look like:
 
-```python
-import matplotlib.pyplot as plt
-import pandas as pd
+```{r}
+library(tidyverse) #tidyverse "contains" ggplot2
+library(jsonlite)
+library(lubridate)
 
-# Data source: https://data.nasa.gov/resource/eva.json (with modifications)
-input_file = open('./eva-data.json', 'r', encoding='ascii')
-output_file = open('./eva-data.csv', 'w', encoding='utf-8')
-graph_file = './cumulative_eva_graph.png'
+# Files
+input_file  <- "./eva-data.json"
+output_file <- "./eva-data.csv"
+graph_file  <- "./cumulative_eva_graph.png"
 
-eva_df = pd.read_json(input_file, convert_dates=['date'], encoding='ascii')
-eva_df['eva'] = eva_df['eva'].astype(float)
-eva_df.dropna(axis=0, subset=['duration', 'date'], inplace=True)
+# 1) Read JSON array into a tibble
+eva_tbl <- jsonlite::fromJSON(input_file) |>
+  as_tibble()
 
-eva_df.to_csv(output_file, index=False, encoding='utf-8')
+# 2) Convert types + drop missing duration/date (pandas dropna subset=['duration','date'])
+eva_tbl <- eva_tbl |>
+  mutate(
+    eva  = as.numeric(eva),
+    date = ymd_hms(date, quiet = TRUE)
+  ) |>
+  filter(!is.na(duration), duration != "", !is.na(date))
 
-eva_df.sort_values('date', inplace=True)
+# 3) Write CSV (index=False equivalent)
+readr::write_csv(eva_tbl, output_file)
 
-eva_df['duration_hours'] = eva_df['duration'].str.split(":").apply(lambda x: int(x[0]) + int(x[1])/60)
-eva_df['cumulative_time'] = eva_df['duration_hours'].cumsum()
-plt.plot(eva_df['date'], eva_df['cumulative_time'], 'ko-')
-plt.xlabel('Year')
-plt.ylabel('Total time spent in space to date (hours)')
-plt.tight_layout()
-plt.savefig(graph_file)
-plt.show()
+# 4) Sort by date
+eva_tbl <- eva_tbl |>
+  arrange(date)
+
+# 5) duration_hours + cumulative_time
+eva_tbl <- eva_tbl |>
+  mutate(
+    duration_hours = {
+      parts <- str_split(duration, ":", n = 2, simplify = TRUE)
+      as.numeric(parts[, 1]) + as.numeric(parts[, 2]) / 60
+    },
+    cumulative_time = cumsum(duration_hours)
+  )
+
+# 6) Plot + save
+p <- ggplot(eva_tbl, aes(x = date, y = cumulative_time)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    x = "Year",
+    y = "Total time spent in space to date (hours)"
+  ) +
+  theme_minimal()
+
+ggsave(graph_file, plot = p, width = 9, height = 5, dpi = 300)
+print(p)
 
 ```
 
-Once we have replaced the  code in our Python script `eva_data_analysis.py` with the above code, we need to make sure that we capture the changes in our virtual development environment too.
+Once we have replaced the  code in our Python script `eva_data_analysis.R` with the above code. As we installed the packages with renv::install() function, the changes are captured in the lockfile. We can verify that it is the case by running on the console 
 
-```bash
-(venv_spacewalks) $ python3 -m pip freeze > requirements.txt
+```{console}
+(venv_spacewalks) $ renv::status() 
 ```
 
 Now, we need to commit the changes we have made. We can add multiple files to the same commit by listing all of them. Remember to use an informative commit message.
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.py requirements.txt
-(venv_spacewalks) $ git commit -m "Refactor code and add Pandas to venv"
+(venv_spacewalks) $ git add eva_data_analysis.R renv.lock
+(venv_spacewalks) $ git commit -m "Refactor code and add tidyverse to lockfile"
 (venv_spacewalks) $ git push origin main
 ```
 
@@ -560,24 +697,21 @@ We have committed the code and the environment changes together since they are r
 
 ## Use comments to explain functionality
 
-Commenting is a very useful practice to help convey the context of the code.
-It can be helpful as a reminder for your future self or your collaborators as to why code is written in a certain way, 
-how it is achieving a specific task, or the real-world implications of your code.
+Commenting is a very useful practice to help convey the context of the code. It can be helpful as a reminder for your future self or your collaborators as to why code is written in a certain way, how it is achieving a specific task, or the real-world implications of your code.
 
-There are several ways to add comments to code:
+From the official [R documentation](https://cran.r-project.org/doc/manuals/r-patched/R-lang.html?utm_source=chatgpt.com#Comments-1): 
 
-- An **inline comment** is a comment on the same line as a code statement. 
-Typically, it comes after the code statement and finishes when the line ends and 
-is useful when you want to explain the code line in short. 
-Inline comments in Python should be separated by at least two spaces from the statement; they start with a # followed
-by a single space, and have no end delimiter.
-- A **single-line comment** or **prologue comment** is a comment that comes the line before a block of code to explain it.
-- A **multi-line** or **block comment** can span multiple lines and has a start and end sequence.
-To comment out a block of code in Python, you can either add a # at the beginning of each line of the block or 
-surround the entire block with three single (`'''`) or double quotes (`"""`).
+> Comments in R are ignored by the parser. Any text from a # character to the end of the line is taken to be a comment, unless the # character is inside a quoted string. For example,
 
-```python
-x = 5  # In Python, inline comments begin with the `#` symbol and a single space.
+> x <- 1  # This is a comment...
+> y <- "  #... but this is not."
+
+The [Tidyverse Style] Guide(https://style.tidyverse.org/functions.html#comments): 
+
+> In code, use comments to explain the “why” not the “what” or “how”. Each line of a comment should begin with the comment symbol and a single space: #.
+
+```{R}
+x <- 5  # In R, "inline comments"" begin with the `#` symbol and at least one space
 
 # this is a single-line comment
 y = x + 10
