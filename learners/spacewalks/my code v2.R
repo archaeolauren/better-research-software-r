@@ -7,43 +7,43 @@ fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "
 library(jsonlite)
 
 j_l <- read_json(data_f_file)
-data=as.data.frame(j_l[[1]])
+data <- as.data.frame(j_l[[1]])
 
 for( i in 2:374){
-  r = j_l[[i]]
+  r <- j_l[[i]]
     print(r)
-    data =merge(data, as.data.frame(r),  all=TRUE)
+    data <- merge(data, as.data.frame(r),  all=TRUE)
 }
 #data.pop(0)
 
 time <- c()
-date = Date()
+date <- as.Date(character())
 
 library(lubridate)
-j=1
+j <-1 
 for (i in rownames(data)){
     print(data[j, ])
     if (!is.na(data[j,]$duration)){
-        tt=data[j,]$duration
+        tt <- data[j,]$duration
         if(tt == ''){
           #do nothing
         }else{
-            t=as.POSIXlt(tt,format='%H:%M')
+            t <- as.POSIXlt(tt,format='%H:%M')
             ttt <- as.numeric(as.difftime(hour(t), units = 'hours')+as.difftime(minute(t), units='mins')+as.difftime(second(t), units='secs'))/(60*60)
             print(t,ttt)
             time <- c(time, ttt)
             if(!is.na(data[j,]$date)){
-                date= c(date, as.Date(substr(data[j,'date'], 1, 10), format = '%Y-%m-%d'))
+                date <- c(date, as.Date(substr(data[j,'date'], 1, 10), format = '%Y-%m-%d'))
 
             }else{
               time <- time[1:length(time) -1]
                 }
             }
         }
-    j = j+1
+    j <- j+1
 }
 
-t=0
+t <- 0
 for(i in time)
     t <- c(t, t[length(t)]+i)
 
