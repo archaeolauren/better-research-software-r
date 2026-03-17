@@ -84,7 +84,7 @@ g_file <- "./cumulative_eva_graph.png"
 
 fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
 
-# Read the whole JSON array (list of records)
+
 data <- jsonlite::fromJSON(readLines(data_f, warn = FALSE), simplifyVector = FALSE)
 
 w <- function(row_values) {
@@ -98,7 +98,7 @@ j <- 1
 for (i in data) {
   print(data[[j]])
 
-  # Write raw values (similar intent to dict.values())
+ 
   w(unlist(data[[j]], use.names = FALSE))
 
   if ("duration" %in% names(data[[j]])) {
@@ -110,8 +110,6 @@ for (i in data) {
       # Parse "H:MM" or "HH:MM" and convert to hours
       t <- strptime(tt, format = "%H:%M", tz = "UTC")
 
-      # If hour parsing fails because the hour isn't zero-padded (e.g. "0:36"),
-      # pad it and try again (Python's strptime accepts "0:36"; R can be pickier).
       if (is.na(t)[1]) {
         tt2 <- sub("^([0-9]):", "0\\1:", tt)
         t <- strptime(tt2, format = "%H:%M", tz = "UTC")
@@ -124,11 +122,9 @@ for (i in data) {
       time <- c(time, ttt)
 
       if ("date" %in% names(data[[j]])) {
-        # Take first 10 chars: YYYY-MM-DD
         date_str <- substr(data[[j]][["date"]], 1, 10)
         date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
       } else {
-        # Python had time.pop(0); mimic by dropping the first element
         if (length(time) > 0) time <- time[-1]
       }
     }
@@ -142,12 +138,12 @@ for (i in time) {
   t <- c(t, t[length(t)] + i)
 }
 
-# date, time = zip(*sorted(zip(date, time)))
+
 ord <- order(date)
 date <- date[ord]
 time <- time[ord]
 
-# Build data for ggplot (plot uses cumulative vector t without leading 0)
+
 plot_df <- data.frame(
   date = date,
   cumulative_time = t[-1]
@@ -165,7 +161,7 @@ p <- ggplot(plot_df, aes(x = date, y = cumulative_time)) +
 ggsave(filename = g_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
 
-# Close files
+
 close(data_f)
 close(data_t)
 
@@ -255,10 +251,9 @@ graph_file  <- "./cumulative_eva_graph.png"
 
 fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
 
-# Read the whole JSON array (list of records)
+
 data <- jsonlite::fromJSON(readLines(input_file, warn = FALSE), simplifyVector = FALSE)
 
-# Comment out this bit if you don't want the spreadsheet
 csv_writer <- function(row_values) {
   writeLines(paste(row_values, collapse = ","), con = output_file)
 }
@@ -270,7 +265,6 @@ j <- 1
 for (i in data) {
   print(data[[j]])
 
-  # Write raw values (similar intent to dict.values())
   csv_writer(unlist(data[[j]], use.names = FALSE))
 
   if ("duration" %in% names(data[[j]])) {
@@ -282,7 +276,7 @@ for (i in data) {
       # Parse "H:MM" or "HH:MM" and convert to hours
       duration_dt <- strptime(duration_str, format = "%H:%M", tz = "UTC")
 
-      # Python's strptime accepts "0:36"; R can be pickier, so pad if needed.
+
       if (is.na(duration_dt)[1]) {
         duration_str2 <- sub("^([0-9]):", "0\\1:", duration_str)
         duration_dt <- strptime(duration_str2, format = "%H:%M", tz = "UTC")
@@ -298,11 +292,9 @@ for (i in data) {
       time <- c(time, duration_hours)
 
       if ("date" %in% names(data[[j]])) {
-        # Take first 10 chars: YYYY-MM-DD
         date_str <- substr(data[[j]][["date"]], 1, 10)
         date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
       } else {
-        # Python had time.pop(0); mimic by dropping the first element
         if (length(time) > 0) time <- time[-1]
       }
     }
@@ -316,12 +308,12 @@ for (i in time) {
   cumulative_hours <- c(cumulative_hours, cumulative_hours[length(cumulative_hours)] + i)
 }
 
-# date, time = zip(*sorted(zip(date, time)))
+
 ord <- order(date)
 date <- date[ord]
 time <- time[ord]
 
-# Build data for ggplot (plot uses cumulative vector without leading 0)
+
 plot_df <- data.frame(
   date = date,
   cumulative_hours = cumulative_hours[-1]
@@ -339,7 +331,7 @@ p <- ggplot(plot_df, aes(x = date, y = cumulative_hours)) +
 ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
 
-# Close files
+
 close(input_file)
 close(output_file)
 
@@ -389,10 +381,9 @@ input_file  <- file("./eva-data.json", open = "r", encoding = "ASCII")
 output_file <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
 graph_file  <- "./cumulative_eva_graph.png"
 
-# Read the whole JSON array (list of records)
 data <- jsonlite::fromJSON(readLines(input_file, warn = FALSE), simplifyVector = FALSE)
 
-# Comment out this bit if you don't want the spreadsheet
+
 csv_writer <- function(row_values) {
   writeLines(paste(row_values, collapse = ","), con = output_file)
 }
@@ -404,7 +395,7 @@ j <- 1
 for (i in data) {
   print(data[[j]])
 
-  # Write raw values (similar intent to dict.values())
+
   csv_writer(unlist(data[[j]], use.names = FALSE))
 
   if ("duration" %in% names(data[[j]])) {
@@ -416,7 +407,6 @@ for (i in data) {
       # Parse "H:MM" or "HH:MM" and convert to hours
       duration_dt <- strptime(duration_str, format = "%H:%M", tz = "UTC")
 
-      # Python's strptime accepts "0:36"; R can be pickier, so pad if needed.
       if (is.na(duration_dt)[1]) {
         duration_str2 <- sub("^([0-9]):", "0\\1:", duration_str)
         duration_dt <- strptime(duration_str2, format = "%H:%M", tz = "UTC")
@@ -432,11 +422,9 @@ for (i in data) {
       time <- c(time, duration_hours)
 
       if ("date" %in% names(data[[j]])) {
-        # Take first 10 chars: YYYY-MM-DD
         date_str <- substr(data[[j]][["date"]], 1, 10)
         date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
       } else {
-        # Python had time.pop(0); mimic by dropping the first element
         if (length(time) > 0) time <- time[-1]
       }
     }
@@ -450,12 +438,12 @@ for (i in time) {
   cumulative_hours <- c(cumulative_hours, cumulative_hours[length(cumulative_hours)] + i)
 }
 
-# date, time = zip(*sorted(zip(date, time)))
+
 ord <- order(date)
 date <- date[ord]
 time <- time[ord]
 
-# Build data for ggplot (plot uses cumulative vector without leading 0)
+
 plot_df <- data.frame(
   date = date,
   cumulative_hours = cumulative_hours[-1]
@@ -473,7 +461,7 @@ p <- ggplot(plot_df, aes(x = date, y = cumulative_hours)) +
 ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
 
-# Close files
+
 close(input_file)
 close(output_file)
 
@@ -628,16 +616,16 @@ library(tidyverse) #tidyverse "contains" ggplot2
 library(jsonlite)
 library(lubridate)
 
-# Files
+
 input_file  <- "./eva-data.json"
 output_file <- "./eva-data.csv"
 graph_file  <- "./cumulative_eva_graph.png"
 
-# 1) Read JSON array into a tibble
+
 eva_tbl <- jsonlite::fromJSON(input_file) |>
   as_tibble()
 
-# 2) Convert types + drop missing duration/date (pandas dropna subset=['duration','date'])
+subset=['duration','date'])
 eva_tbl <- eva_tbl |>
   mutate(
     eva  = as.numeric(eva),
@@ -645,14 +633,14 @@ eva_tbl <- eva_tbl |>
   ) |>
   filter(!is.na(duration), duration != "", !is.na(date))
 
-# 3) Write CSV (index=False equivalent)
+
 readr::write_csv(eva_tbl, output_file)
 
-# 4) Sort by date
+
 eva_tbl <- eva_tbl |>
   arrange(date)
 
-# 5) duration_hours + cumulative_time
+
 eva_tbl <- eva_tbl |>
   mutate(
     duration_hours = {
@@ -662,7 +650,7 @@ eva_tbl <- eva_tbl |>
     cumulative_time = cumsum(duration_hours)
   )
 
-# 6) Plot + save
+
 p <- ggplot(eva_tbl, aes(x = date, y = cumulative_time)) +
   geom_point() +
   geom_line() +
