@@ -15,10 +15,6 @@ for( i in 2:374){
     data =merge(data, as.data.frame(r),  all=TRUE)
 }
 #data.pop(0)
-## Comment out this bit if you don't want the spreadsheet
-write.csv(data_t_file)
-
-
 
 time <- c()
 date = Date()
@@ -27,8 +23,6 @@ library(lubridate)
 j=1
 for (i in rownames(data)){
     print(data[j, ])
-    # and this bit
-    # w.writerow(data[j].values())
     if (!is.na(data[j,]$duration)){
         tt=data[j,]$duration
         if(tt == ''){
@@ -40,7 +34,6 @@ for (i in rownames(data)){
             time <- c(time, ttt)
             if(!is.na(data[j,]$date)){
                 date= c(date, as.Date(substr(data[j,'date'], 1, 10), format = '%Y-%m-%d'))
-                #date.append(data[j]['date'][0:10])
 
             }else{
               time <- time[1:length(time) -1]
@@ -54,14 +47,12 @@ t=0
 for(i in time)
     t <- c(t, t[length(t)]+i)
 
-
 df <- data.frame(
 date, time
 )[order(date, time), ]
 
 date <- df$date
 time <- df$time
-
 
 png(g_file)
 plot(date,t[2:length(t)],
