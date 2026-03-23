@@ -270,7 +270,7 @@ Rscript (R) version 4.5.2 (2025-10-31)
 
 ## RStudio
 
-We will use Posit's [RStudio](https://posit.co/download/rstudio-desktop/) as an Integrated Development Environment (IDE) to type and execute Python code and run command line terminal and Git commands.
+We will use Posit's [RStudio](https://posit.co/download/rstudio-desktop/) as an Integrated Development Environment (IDE) to type and execute R code and run command line terminal and Git commands.
 
 Please make sure to [download RStudio](https://posit.co/download/rstudio-desktop/) for your platform.
 
