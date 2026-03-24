@@ -249,10 +249,15 @@ renv::install("my_package")
 Let's install the packages we need for this script. At this time, we need `jsonlite`, `lubridate` and `ggplot2`. 
 
 ```r
-renv::install("jsonlite", "lubridate", "ggplot2"), 
+renv::install("jsonlite", "lubridate", "ggplot2")
 ```
 
-I can also install packages in any of the usual ways, i.e., `install.packages()` or `pak::pkg_install("ggplot2")`, but you'll have to complete an additional step to update the `lock` file enumerating packages and dependencies. A call to `renv::snapshot()` should suffice. 
+We can also install packages in any of the usual ways, i.e., `install.packages()` or `pak::pkg_install("ggplot2")` and `renv` will intercept and install it in the environment.
+Then we need to run the `snapshot()` function to update the `renv.lock` file with all the packages installed.
+
+```r
+renv::snapshot()
+```
 
 Now we can open the `renv.lock` file and see that it stores a lot of machine-readable information in plain text. However, you could also <kbd>COMMAND</kbd>+<kbd>F</kbd> (MacOS) or <kbd>CTRL</kbd>+<kbd>F</kbd> (Windows) to double check that the packages installed are now listed. 
 
@@ -266,11 +271,18 @@ Let's delete the packages we just installed and then restore them using the exis
 remove.packages(c("jsonlite", "lubridate", "ggplot2"))
 ```
 
+
 If you attempt to load these packages now, your get an error
 
 ```r
-library("jsonlite)
+library("jsonlite")
 ```
+
+::::::::::::::: instructor
+
+If the call to load `jsonlite` succeeds they might need to restart the R session because they loaded it previously and it is cached.
+
+:::::::::::::::::::::::::::
 
 ```output
 Error in library(jsonlite) : there is no package called ‘jsonlite’
@@ -278,7 +290,7 @@ Error in library(jsonlite) : there is no package called ‘jsonlite’
 
 To restore the packages from the `renv.lock`, 
 ```r
-renv::restore("renv.lock")
+renv::restore()
 ```
 
 If you attempt to load these packages now, it will work!
