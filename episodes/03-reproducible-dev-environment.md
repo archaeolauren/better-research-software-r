@@ -322,11 +322,21 @@ echo "**/.DS_Store" >> .gitignore
 Let's add and commit our updated `.gitignore` to our repository.
 
 ```bash
-(venv_spacewalks) $ git add .gitignore
-(venv_spacewalks) $ git commit -m "Ignore renv folder and DS_Store file"
+$ git add .gitignore
+$ git commit -m "Ignore renv folder and DS_Store file"
 ```
 
 The same method can be applied to ignore various other files that you do not want git to track.
+
+
+### Adding the lock file to the repo
+
+We should also add our lock file to the repository so anyone who uses the repo going forward can rebuild our environment.
+
+```bash
+$ git add renv.lock
+$ git commit -m "Adding renv.lock file"
+```
 
 
 :::::::::::::::::::::: callout
