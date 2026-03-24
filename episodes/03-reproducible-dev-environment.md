@@ -371,7 +371,7 @@ We are now setup to run our code from the newly created R project
 
 ```bash
 
-(venv_spacewalks) $ **Rscript eva_data_analysis.R**
+(venv_spacewalks) $ Rscript eva_data_analysis.R
 
 ```
 
