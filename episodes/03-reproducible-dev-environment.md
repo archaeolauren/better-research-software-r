@@ -323,7 +323,7 @@ Let's add and commit our updated `.gitignore` to our repository.
 
 ```bash
 (venv_spacewalks) $ git add .gitignore
-(venv_spacewalks) $ git commit -m "Ignore venv folder and DS_Store file"
+(venv_spacewalks) $ git commit -m "Ignore renv folder and DS_Store file"
 ```
 
 The same method can be applied to ignore various other files that you do not want git to track.
