@@ -596,8 +596,6 @@ exclusions: list(
 
 Our script currently reads the data line-by-line from the JSON data file and uses custom code to manipulate the data. Variables of interest are stored in lists but there are more suitable data structures (e.g. dataframes or tibbles) to store data in our case.
 
-# question to the team. I already had to use a dataframe for ggplot. Should we use base R instead?
-# Further question, the original translated code into R used base R plots  
 
 By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone. The main functionality of our code can be rewritten as follows using data frames from base R or tibbles from the `tidyverse` package to load and manipulate the data in data frames.  
 
