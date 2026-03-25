@@ -69,93 +69,80 @@ Let’s look at our code again. One thing that stands out is that we’re callin
 Our code after the modification should look like the following.
 
 ```r
-library(jsonlite)
-
-g_file <- "./cumulative_eva_graph.png"
-
+# https://data.nasa.gov/resource/eva.json (with modifications)
+data_f_file = 'eva-data.json'
+data_t_file = 'eva-data.csv'
+g_file = 'cumulative_eva_graph.png'
 fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
 
+library(jsonlite)
 
-data <- jsonlite::fromJSON(readLines(data_f, warn = FALSE), simplifyVector = FALSE)
+j_l <- read_json(data_f_file)
+data=as.data.frame(j_l[[1]])
 
-w <- function(row_values) {
-  writeLines(paste(row_values, collapse = ","), con = data_t)
+for( i in 2:374){
+  r = j_l[[i]]
+    print(r)
+    data =merge(data, as.data.frame(r),  all=TRUE)
 }
+#data.pop(0)
+## Comment out this bit if you don't want the spreadsheet
+write.csv(data_t_file)
+
+
 
 time <- c()
-date <- as.POSIXct(character())
+library(lubridate)
+date = Date()
 
-j <- 1
-for (i in data) {
-  print(data[[j]])
 
- 
-  w(unlist(data[[j]], use.names = FALSE))
+j=1
+for (i in rownames(data)){
+    print(data[j, ])
+    # and this bit
+    # w.writerow(data[j].values())
+    if (!is.na(data[j,]$duration)){
+        tt=data[j,]$duration
+        if(tt == ''){
+          #do nothing
+        }else{
+            t=as.POSIXlt(tt,format='%H:%M')
+            ttt <- as.numeric(as.difftime(hour(t), units = 'hours')+as.difftime(minute(t), units='mins')+as.difftime(second(t), units='secs'))/(60*60)
+            print(t,ttt)
+            time <- c(time, ttt)
+            if(!is.na(data[j,]$date)){
+                date= c(date, as.Date(substr(data[j,'date'], 1, 10), format = '%Y-%m-%d'))
+                #date.append(data[j]['date'][0:10])
 
-  if ("duration" %in% names(data[[j]])) {
-    tt <- data[[j]][["duration"]]
-
-    if (tt == "") {
-      # pass
-    } else {
-      # Parse "H:MM" or "HH:MM" and convert to hours
-      t <- strptime(tt, format = "%H:%M", tz = "UTC")
-
-      if (is.na(t)[1]) {
-        tt2 <- sub("^([0-9]):", "0\\1:", tt)
-        t <- strptime(tt2, format = "%H:%M", tz = "UTC")
-      }
-
-      ttt <- (as.numeric(t$hour) * 3600 + as.numeric(t$min) * 60 + as.numeric(t$sec)) / (60 * 60)
-      print(t)
-      print(ttt)
-
-      time <- c(time, ttt)
-
-      if ("date" %in% names(data[[j]])) {
-        date_str <- substr(data[[j]][["date"]], 1, 10)
-        date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
-      } else {
-        if (length(time) > 0) time <- time[-1]
-      }
-    }
-  }
-
-  j <- j + 1
+            }else{
+              time <- time[1:length(time) -1]
+                }
+            }
+        }
+    j = j+1
 }
 
-t <- c(0)
-for (i in time) {
-  t <- c(t, t[length(t)] + i)
-}
+t=0
+for(i in time)
+    t <- c(t, t[length(t)]+i)
 
 
-ord <- order(date)
-date <- date[ord]
-time <- time[ord]
+df <- data.frame(
+date, time
+)[order(date, time), ]
+
+date <- df$date
+time <- df$time
 
 
-plot_df <- data.frame(
-  date = date,
-  cumulative_time = t[-1]
+png(g_file)
+plot(date,t[2:length(t)],
+xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 )
-
-p <- ggplot(plot_df, aes(x = date, y = cumulative_time)) +
-  geom_point() +
-  geom_line() +
-  labs(
-    x = "Year",
-    y = "Total time spent in space to date (hours)"
-  ) +
-  theme_minimal()
-
-ggsave(filename = g_file, plot = p, width = 9, height = 5, dpi = 300)
-print(p)
-
-
-close(data_f)
-close(data_t)
-
+dev.off()
+plot(date,t[2:length(t)],
+xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
+)
 
 ```
 
@@ -177,8 +164,7 @@ Check the [official  R documentation](https://cran.r-project.org/doc/manuals/r-r
 Some highlights:
 - Only alphanumeric characters, dot, and underscores are permitted in variable names.  
 - Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
-- Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
-- Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
+
 ### Useful things to consider when naming variables
 
 Variables are the most common thing you will assign when coding, and it's really important that it is clear what each variable means in order to understand what the code is doing.
@@ -187,16 +173,13 @@ If you return to your code after a long time doing something else, or share your
 
 Therefore we need to give them clear names, but we also want to keep them concise so the code stays readable. There are no "hard and fast rules" here, and it's often a case of using your best judgment.
 
-> “There are only two hard things in Computer Science: cache invalidation and naming things.”  
-Phil Karlton
 :::::::::::::::::::::::: callout
 
 “There are only two hard things in Computer Science: cache invalidation and naming things.”  
 \- Phil Karlton
 Some useful tips for naming variables:
 :::::::::::::::::::::::::::::::::
-“There are only two hard things in Computer Science: cache invalidation and naming things.”  
-\- Phil Karlton
+
 This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  Though `c` in R often refers to the `c()` function which might be something to consider as well.
 :::::::::::::::::::::::::::::::::
 Some useful tips for naming variables
@@ -212,11 +195,22 @@ Let's apply this to `eva_data_analysis.R`.
 
 ### Rename our variables to be more descriptive (5 min)
 
-Let's apply this to `eva_data_analysis.R`.  ## should this be my code v2.R?
+Let's apply this to `eva_data_analysis.R`.
 
 a. Edit the code as follows to use descriptive (and consistent) variable names:
 
     - Change `data_f` to `input_file`
+    - Change data_t to output_file
+    - Change g_file to graph_file
+    
+*Be sure to change all the occurrences of each variable name.*
+
+b. What other variable names in our code would benefit from renaming? Rename these too. Hint: variables w, t, tt and ttt could also be renamed to be more descriptive.
+
+c. Commit your changes to your repository. Remember to use an informative commit message.
+
+
+
 :::::::::::::::::: hint
 
 Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
@@ -240,104 +234,66 @@ Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables
       
 ```r
 
-# Base R translation of the original Python script
-# Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
-# JSON file is a single JSON array, so we parse it in one shot.
-
-library(jsonlite)
-library(ggplot2)
-
 # https://data.nasa.gov/resource/eva.json (with modifications)
-input_file  <- file("./eva-data.json", open = "r", encoding = "ASCII")
-output_file <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
-graph_file  <- "./cumulative_eva_graph.png"
-
+input_file = 'eva-data.json'
+output_file = 'eva-data.csv'
+graph_file = 'cumulative_eva_graph.png'
 fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
-
-
-data <- jsonlite::fromJSON(readLines(input_file, warn = FALSE), simplifyVector = FALSE)
-
-csv_writer <- function(row_values) {
-  writeLines(paste(row_values, collapse = ","), con = output_file)
+library(jsonlite)
+j_l <- read_json(input_file)
+data=as.data.frame(j_l[[1]])
+for( i in 2:374){
+  r = j_l[[i]]
+    print(r)
+    data =merge(data, as.data.frame(r),  all=TRUE)
 }
-
+#data.pop(0)
+## Comment out this bit if you don't want the spreadsheet
+write.csv(output_file)
 time <- c()
-date <- as.POSIXct(character())
-
-j <- 1
-for (i in data) {
-  print(data[[j]])
-
-  csv_writer(unlist(data[[j]], use.names = FALSE))
-
-  if ("duration" %in% names(data[[j]])) {
-    duration_str <- data[[j]][["duration"]]
-
-    if (duration_str == "") {
-      # pass
-    } else {
-      # Parse "H:MM" or "HH:MM" and convert to hours
-      duration_dt <- strptime(duration_str, format = "%H:%M", tz = "UTC")
-
-
-      if (is.na(duration_dt)[1]) {
-        duration_str2 <- sub("^([0-9]):", "0\\1:", duration_str)
-        duration_dt <- strptime(duration_str2, format = "%H:%M", tz = "UTC")
-      }
-
-      duration_hours <- (as.numeric(duration_dt$hour) * 3600 +
-                         as.numeric(duration_dt$min) * 60 +
-                         as.numeric(duration_dt$sec)) / (60 * 60)
-
-      print(duration_dt)
-      print(duration_hours)
-
-      time <- c(time, duration_hours)
-
-      if ("date" %in% names(data[[j]])) {
-        date_str <- substr(data[[j]][["date"]], 1, 10)
-        date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
-      } else {
-        if (length(time) > 0) time <- time[-1]
-      }
-    }
-  }
-
-  j <- j + 1
+library(lubridate)
+date = Date()
+j=1
+for (i in rownames(data)){
+    print(data[j, ])
+    # and this bit
+    # csv_writer.writerow(data[j].values())
+    if (!is.na(data[j,]$duration)){
+        duration_dt=data[j,]$duration
+        if(duration_dt == ''){
+          #do nothing
+        }else{
+            duration_dt=as.POSIXlt(duration_dt,format='%H:%M')
+            duration_hours <- as.numeric(as.difftime(hour(duration_dt), units = 'hours')+as.difftime(minute(duration_dt), units='mins')+as.difftime(second(duration_dt), units='secs'))/(60*60)
+            print(duration_dt,duration_hours)
+            time <- c(time, duration_hours)
+            if(!is.na(data[j,]$date)){
+                date= c(date, as.Date(substr(data[j,'date'], 1, 10), format = '%Y-%m-%d'))
+                #date.append(data[j]['date'][0:10])
+            }else{
+              time <- time[1:length(time) -1]
+                }
+            }
+        }
+    j = j+1
 }
-
-cumulative_hours <- c(0)
-for (i in time) {
-  cumulative_hours <- c(cumulative_hours, cumulative_hours[length(cumulative_hours)] + i)
-}
-
-
-ord <- order(date)
-date <- date[ord]
-time <- time[ord]
-
-
-plot_df <- data.frame(
-  date = date,
-  cumulative_hours = cumulative_hours[-1]
+t=0
+for(i in time)
+    t <- c(t, t[length(t)]+i)
+df <- data.frame(
+date, time
+)[order(date, time), ]
+date <- df$date
+time <- df$time
+png(graph_file)
+plot(date,t[2:length(t)],
+xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
+)
+dev.off()
+plot(date,t[2:length(t)],
+xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 )
 
-p <- ggplot(plot_df, aes(x = date, y = cumulative_hours)) +
-  geom_point() +
-  geom_line() +
-  labs(
-    x = "Year",
-    y = "Total time spent in space to date (hours)"
-  ) +
-  theme_minimal()
-
-ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
-print(p)
-
-
- $ git add eva_data_analysis.R
- $ git commit -m "Use descriptive variable names"
- $ git push origin main
 ```
 c. Let's commit our latest changes:
 
@@ -372,104 +328,67 @@ Updated code:
 
 ```r
 
-# Base R translation of the original Python script
-# Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
-# JSON file is a single JSON array, so we parse it in one shot.
-
-library(jsonlite)
-library(ggplot2)
-
 # https://data.nasa.gov/resource/eva.json (with modifications)
-input_file  <- file("./eva-data.json", open = "r", encoding = "ASCII")
-output_file <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
-graph_file  <- "./cumulative_eva_graph.png"
-
-data <- jsonlite::fromJSON(readLines(input_file, warn = FALSE), simplifyVector = FALSE)
-
-
-csv_writer <- function(row_values) {
-  writeLines(paste(row_values, collapse = ","), con = output_file)
+input_file = 'eva-data.json'
+output_file = 'eva-data.csv'
+graph_file = 'cumulative_eva_graph.png'
+library(jsonlite)
+j_l <- read_json(input_file)
+data=as.data.frame(j_l[[1]])
+for( i in 2:374){
+  r = j_l[[i]]
+    print(r)
+    data =merge(data, as.data.frame(r),  all=TRUE)
 }
-
+#data.pop(0)
+## Comment out this bit if you don't want the spreadsheet
+write.csv(output_file)
 time <- c()
-date <- as.POSIXct(character())
-
-j <- 1
-for (i in data) {
-  print(data[[j]])
-
-
-  csv_writer(unlist(data[[j]], use.names = FALSE))
-
-  if ("duration" %in% names(data[[j]])) {
-    duration_str <- data[[j]][["duration"]]
-
-    if (duration_str == "") {
-      # pass
-    } else {
-      # Parse "H:MM" or "HH:MM" and convert to hours
-      duration_dt <- strptime(duration_str, format = "%H:%M", tz = "UTC")
-
-      if (is.na(duration_dt)[1]) {
-        duration_str2 <- sub("^([0-9]):", "0\\1:", duration_str)
-        duration_dt <- strptime(duration_str2, format = "%H:%M", tz = "UTC")
-      }
-
-      duration_hours <- (as.numeric(duration_dt$hour) * 3600 +
-                         as.numeric(duration_dt$min) * 60 +
-                         as.numeric(duration_dt$sec)) / (60 * 60)
-
-      print(duration_dt)
-      print(duration_hours)
-
-      time <- c(time, duration_hours)
-
-      if ("date" %in% names(data[[j]])) {
-        date_str <- substr(data[[j]][["date"]], 1, 10)
-        date <- c(date, as.POSIXct(strptime(date_str, format = "%Y-%m-%d", tz = "UTC")))
-      } else {
-        if (length(time) > 0) time <- time[-1]
-      }
-    }
-  }
-
-  j <- j + 1
+library(lubridate)
+date = Date()
+j=1
+for (i in rownames(data)){
+    print(data[j, ])
+    # and this bit
+    # csv_writer.writerow(data[j].values())
+    if (!is.na(data[j,]$duration)){
+        duration_dt=data[j,]$duration
+        if(duration_dt == ''){
+          #do nothing
+        }else{
+            duration_dt=as.POSIXlt(duration_dt,format='%H:%M')
+            duration_hours <- as.numeric(as.difftime(hour(duration_dt), units = 'hours')+as.difftime(minute(duration_dt), units='mins')+as.difftime(second(duration_dt), units='secs'))/(60*60)
+            print(duration_dt,duration_hours)
+            time <- c(time, duration_hours)
+            if(!is.na(data[j,]$date)){
+                date= c(date, as.Date(substr(data[j,'date'], 1, 10), format = '%Y-%m-%d'))
+                #date.append(data[j]['date'][0:10])
+            }else{
+              time <- time[1:length(time) -1]
+                }
+            }
+        }
+    j = j+1
 }
-
-cumulative_hours <- c(0)
-for (i in time) {
-  cumulative_hours <- c(cumulative_hours, cumulative_hours[length(cumulative_hours)] + i)
-}
-
-
-ord <- order(date)
-date <- date[ord]
-time <- time[ord]
-
-
-plot_df <- data.frame(
-  date = date,
-  cumulative_hours = cumulative_hours[-1]
+t=0
+for(i in time)
+    t <- c(t, t[length(t)]+i)
+df <- data.frame(
+date, time
+)[order(date, time), ]
+date <- df$date
+time <- df$time
+png(graph_file)
+plot(date,t[2:length(t)],
+xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
+)
+dev.off()
+plot(date,t[2:length(t)],
+xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 )
 
-p <- ggplot(plot_df, aes(x = date, y = cumulative_hours)) +
-  geom_point() +
-  geom_line() +
-  labs(
-    x = "Year",
-    y = "Total time spent in space to date (hours)"
-  ) +
-  theme_minimal()
 
-ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
-print(p)
-
-
-close(input_file)
- $ git add eva_data_analysis.R
- $ git commit -m "Remove unused variable fieldname"
- $ git push origin main
-
+```
 Commit changes:
 
 ```bash
@@ -477,9 +396,6 @@ Commit changes:
 (venv_spacewalks) $ git commit -m "Remove unused variable fieldname"
 (venv_spacewalks) $ git push origin main
 ```
-
-A linter is a tool that automatically checks your source code for problems without running it.
-
 
 A linter is a tool that automatically checks your source code for problems without running it. For Python, linters mainly flag:
 	•	Style issues: formatting, naming conventions, line length, import order
