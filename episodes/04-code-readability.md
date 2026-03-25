@@ -19,7 +19,7 @@ After completing this episode, participants should be able to:
 - Import third-party libraries at the top of a script
 - Choose function and variable names that help explain the purpose of the function or variable
 - Organize code into reusable functions that achieve a singular purpose
-- Write informative comments and `roxygen2` comments to provide more detail about what the code is doing
+- Write informative, `roxygen2` comments to provide more detail about what the code is doing
 
 :::
 
@@ -46,7 +46,7 @@ At this point, the code in your local software project's directory should be as 
 
 ### Make sure your packages and dependencies are up to date
 
-In the previous section we discusses using the package renv.lock to track packages and their dependencies. At this time, you should have a current renv.lock files and you should have restored the packages library. 
+In the previous section we discussed using the package renv.lock to track packages and their dependencies. At this time, you should have a current renv.lock files and you should have restored the packages library. 
 
 You can check that the project is up-to-date with 
 
@@ -54,7 +54,7 @@ You can check that the project is up-to-date with
 renv::status() #you can run this any time
 ```
 
-If you haven't, you can restored the packages and their dependencies by running
+If you haven't, you can restore the packages and their dependencies by running
 
 ```r
 renv::restore("renv.lock")
@@ -62,24 +62,15 @@ renv::restore("renv.lock")
 
 :::
 
-## Place `library` funtions at the top
+## Place `library` functions at the top
 
-Let’s look at our code again. One thing that stands out is that we’re calling library() in multiple places throughout the script. By convention, all libraries should be loaded at the top so dependencies are easy to see and not buried in the logic. This improves readability and makes the code easier to reuse and maintain.
+Let’s look at our code again. One thing that stands out is that we’re calling library() in multiple places throughout the script. By convention, all libraries should be loaded at the top so dependencies are easy to see and not buried in the code. This improves readability and makes the code easier to reuse and maintain.
 
 Our code after the modification should look like the following.
 
 ```r
-
-# Base R translation of the original Python script
-# Uses ggplot2 for plotting, but otherwise stays close to the Python structure.
-# IMPORTANT: This JSON file is a single JSON array, so we parse it in one shot.
-
 library(jsonlite)
-library(ggplot2)
 
-# https://data.nasa.gov/resource/eva.json (with modifications)
-data_f <- file("./eva-data.json", open = "r", encoding = "ASCII")
-data_t <- file("./eva-data.csv", open = "w", encoding = "UTF-8")
 g_file <- "./cumulative_eva_graph.png"
 
 fieldnames <- c("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
@@ -176,15 +167,18 @@ Let's make sure we commit our changes.
 ```
 ## Rules for variable names in R
 
-Check the [official documentation](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#R-commands_002c-case-sensitivity_002c-etc_002e). You can also find useful the [Tidyverse Style Guide](https://style.tidyverse.org/).
-
+ $ git add eva_data_analysis.R
+ $ git commit -m "Move library calls to the top of the script"
 - Only alphanumeric characters, dot, and underscores are permitted in variable names.  
 - Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
 - After the first character, you can use letters, digits, dots, and underscores.  
-- Cannot contain spaces or most punctuation (e.g., -, +, ?, !, @) unless you quote the name.  
+Check the [official  R documentation](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#R-commands_002c-case-sensitivity_002c-etc_002e). You may also find the [Tidyverse Style Guide](https://style.tidyverse.org/) useful.
 - Cannot be a reserved word (keywords) such as if, else, repeat, while, function, for, in, next, break, TRUE, FALSE, NULL, NA, NaN, Inf, etc.  
-- Variable names — and objects in general — are case-sensitive. So `speed_of_light` and `Speed_Of_Light` are not the same. 
-
+Some highlights:
+- Only alphanumeric characters, dot, and underscores are permitted in variable names.  
+- Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
+- Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
+- Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
 ### Useful things to consider when naming variables
 
 Variables are the most common thing you will assign when coding, and it's really important that it is clear what each variable means in order to understand what the code is doing.
@@ -195,8 +189,16 @@ Therefore we need to give them clear names, but we also want to keep them concis
 
 > “There are only two hard things in Computer Science: cache invalidation and naming things.”  
 Phil Karlton
+:::::::::::::::::::::::: callout
 
-
+“There are only two hard things in Computer Science: cache invalidation and naming things.”  
+\- Phil Karlton
+Some useful tips for naming variables:
+:::::::::::::::::::::::::::::::::
+“There are only two hard things in Computer Science: cache invalidation and naming things.”  
+\- Phil Karlton
+This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  Though `c` in R often refers to the `c()` function which might be something to consider as well.
+:::::::::::::::::::::::::::::::::
 Some useful tips for naming variables
 
 - Short words are better than single character names. For example, if we were creating a variable to store the speed to read a file, `s` (for 'speed') is not descriptive enough but `MBReadPerSecondAverageAfterLastFlushToLog` is too long to read and prone to misspellings. `ReadSpeed` (or `read_speed`) would suffice.  
@@ -204,7 +206,7 @@ Some useful tips for naming variables
 This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  
 - Try to be descriptive where possible and avoid meaningless or funny names like `foo`, `bar`, `var`, `thing`, etc.  
 - Programming languages often have global pre-built functions, such as `input`, which you may accidentally overwrite if you assign a variable with the same name and no longer be able to access the original `input` function. In this case, opting for something like `input_data` would be preferable. 
-
+Let's apply this to `eva_data_analysis.R`.
 
 :::::: challenge
 
@@ -215,21 +217,22 @@ Let's apply this to `eva_data_analysis.R`.  ## should this be my code v2.R?
 a. Edit the code as follows to use descriptive (and consistent) variable names:
 
     - Change `data_f` to `input_file`
-    - Change `data_t` to `output_file`
-    - Change `g_file` to `graph_file`
+:::::::::::::::::: hint
 
-    *Be sure to change all the occurrences of each variable name.*
-b. What other variable names in our code would benefit from renaming? 
+Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
+  - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
+  - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
+  - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
+
+::::::::::::::::::::::::
 Rename these too. 
 Hint: variables `w`, `t`, `tt` and `ttt` could also be renamed to be more descriptive.
   - **Change `w` to `csv_writer`**: makes it clear this variable is a CSV writer object. Using "w" alone would more likely be interpreted as "width" or "weight".
-  - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
+Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `t`, `tt` and `ttt` to be more descriptive. 
   - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
   - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
 c. Commit your changes to your repository. Remember to use an informative commit message.
 
-
-::: solution
 
 
 Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `w`, `t`, `tt` and `ttt` to be more descriptive. 
@@ -332,9 +335,9 @@ ggsave(filename = graph_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
 
 
-close(input_file)
-close(output_file)
-
+ $ git add eva_data_analysis.R
+ $ git commit -m "Use descriptive variable names"
+ $ git push origin main
 ```
 c. Let's commit our latest changes:
 
@@ -463,9 +466,9 @@ print(p)
 
 
 close(input_file)
-close(output_file)
-
-```
+ $ git add eva_data_analysis.R
+ $ git commit -m "Remove unused variable fieldname"
+ $ git push origin main
 
 Commit changes:
 
@@ -475,12 +478,8 @@ Commit changes:
 (venv_spacewalks) $ git push origin main
 ```
 
-:::
-::::::
+A linter is a tool that automatically checks your source code for problems without running it.
 
-:::::::::::::::::::::::::::::::: callout
-
-[Linters](https://glosario.carpentries.org/en/#linter) (static analysis tools) can be very helpful with tasks like this.
 
 A linter is a tool that automatically checks your source code for problems without running it. For Python, linters mainly flag:
 	•	Style issues: formatting, naming conventions, line length, import order
@@ -590,7 +589,7 @@ exclusions: list(
 )
 ```
 
-
+## Use existing packages from known developers
 ::::::::::::::::::::::::::::::::::::::::
 
 ## Use packages 
@@ -666,15 +665,15 @@ print(p)
 
 ```
 
-Once we have replaced the  code in our Python script `eva_data_analysis.R` with the above code. As we installed the packages with renv::install() function, the changes are captured in the lockfile. We can verify that it is the case by running on the console 
+ $ renv::status() 
 
 ```{console}
 (venv_spacewalks) $ renv::status() 
 ```
 
-Now, we need to commit the changes we have made. We can add multiple files to the same commit by listing all of them. Remember to use an informative commit message.
-
-```bash
+ $ git add eva_data_analysis.R renv.lock
+ $ git commit -m "Refactor code and add tidyverse to lockfile"
+ $ git push origin main
 (venv_spacewalks) $ git add eva_data_analysis.R renv.lock
 (venv_spacewalks) $ git commit -m "Refactor code and add tidyverse to lockfile"
 (venv_spacewalks) $ git push origin main
