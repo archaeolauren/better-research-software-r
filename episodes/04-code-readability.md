@@ -149,13 +149,14 @@ xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 Let's make sure we commit our changes.
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.R
-(venv_spacewalks) $ git commit -m "Move library calls to the top of the script"
+ $ git add eva_data_analysis.R
+ $ git commit -m "Move library calls to the top of the script"
 ```
 ## Rules for variable names in R
 
  $ git add eva_data_analysis.R
  $ git commit -m "Move library calls to the top of the script"
+Some highlights:
 - Only alphanumeric characters, dot, and underscores are permitted in variable names.  
 - Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
 - After the first character, you can use letters, digits, dots, and underscores.  
@@ -182,11 +183,11 @@ Some useful tips for naming variables:
 
 This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  Though `c` in R often refers to the `c()` function which might be something to consider as well.
 :::::::::::::::::::::::::::::::::
-Some useful tips for naming variables
+Some useful tips for naming variables:
 
 - Short words are better than single character names. For example, if we were creating a variable to store the speed to read a file, `s` (for 'speed') is not descriptive enough but `MBReadPerSecondAverageAfterLastFlushToLog` is too long to read and prone to misspellings. `ReadSpeed` (or `read_speed`) would suffice.  
 - If you are finding it difficult to come up with a variable name that is both short and descriptive, go with the short version and use an inline comment to describe it further (more on those in the next section).  
-This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  
+This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  Though `c` in R often refers to the `c()` function which might be something to consider as well.
 - Try to be descriptive where possible and avoid meaningless or funny names like `foo`, `bar`, `var`, `thing`, etc.  
 - Programming languages often have global pre-built functions, such as `input`, which you may accidentally overwrite if you assign a variable with the same name and no longer be able to access the original `input` function. In this case, opting for something like `input_data` would be preferable. 
 Let's apply this to `eva_data_analysis.R`.
@@ -392,16 +393,12 @@ xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 Commit changes:
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.R
-(venv_spacewalks) $ git commit -m "Remove unused variable fieldname"
-(venv_spacewalks) $ git push origin main
+ $ git add eva_data_analysis.R
+ $ git commit -m "Remove unused variable fieldname"
+ $ git push origin main
 ```
 
-A linter is a tool that automatically checks your source code for problems without running it. For Python, linters mainly flag:
-	•	Style issues: formatting, naming conventions, line length, import order
-	•	Potential bugs: unused imports/variables, unreachable code, dubious comparisons, shadowing built-ins
-	•	Code smells / maintainability: overly complex functions, too many branches, duplicated logic
-	•	Sometimes security issues (depending on the tool)
+A linter is a tool that automatically checks your source code for problems without running it.
 
 Linters usually produce warnings/errors with line numbers and (often) suggested fixes.
 
@@ -508,7 +505,7 @@ exclusions: list(
 ## Use existing packages from known developers
 ::::::::::::::::::::::::::::::::::::::::
 
-## Use packages 
+## Use existing packages from known developers
 
 Our script currently reads the data line-by-line from the JSON data file and uses custom code to manipulate the data. Variables of interest are stored in lists but there are more suitable data structures (e.g. dataframes or tibbles) to store data in our case.
 
@@ -588,9 +585,9 @@ print(p)
  $ git add eva_data_analysis.R renv.lock
  $ git commit -m "Refactor code and add tidyverse to lockfile"
  $ git push origin main
-(venv_spacewalks) $ git add eva_data_analysis.R renv.lock
-(venv_spacewalks) $ git commit -m "Refactor code and add tidyverse to lockfile"
-(venv_spacewalks) $ git push origin main
+ $ git add eva_data_analysis.R renv.lock
+ $ git commit -m "Refactor code and add tidyverse to lockfile"
+ $ git push origin main
 ```
 
 We have committed the code and the environment changes together since they are related and form one logical unit of change.
