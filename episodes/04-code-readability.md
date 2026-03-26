@@ -904,10 +904,8 @@ Our `read_json_to_dataframe` function fully described by the `roxygen2` comments
 #'   to contain a JSON array of objects, e.g. `[{"eva":"1", ...}, {"eva":"2", ...}]`.
 #' @return A tibble with one row per JSON record and one column per field.
 #' @examples
-#' \dontrun{
 #' eva_tbl <- read_json_to_dataframe("./eva-data.json")
 #' dplyr::glimpse(eva_tbl)
-#' }
 read_json_to_dataframe <- function(input_file) {
   jsonlite::fromJSON(input_file) |>
     tibble::as_tibble()
@@ -943,10 +941,8 @@ Our `write_dataframe_to_csv` function fully described by its `roxygen2` comments
 #'   suitable for piping into downstream steps.
 #'
 #' @examples
-#' \dontrun{
 #' eva_tbl <- read_json_to_dataframe("./eva-data.json")
 #' eva_tbl <- write_dataframe_to_csv(eva_tbl, "./eva-data.csv")
-#' }
 write_dataframe_to_csv <- function(df, output_file) {
   df <- df |>
     dplyr::mutate(
@@ -980,11 +976,9 @@ Our `plot_cumulative_time_in_space` function fully described by its `roxygen2` c
 #' @return Invisibly returns the ggplot object.
 #'
 #' @examples
-#' \dontrun{
 #' eva_tbl <- read_json_to_dataframe("./eva-data.json") |>
 #'   write_dataframe_to_csv("./eva-data.csv")
-#' plot_cumulative_time_in_space(eva_tbl, "./cumulative_eva_graph.png")
-#' }
+#' plot_cumulative_time_in_space(eva_tbl, "./cumulative_eva_graph.png"
 plot_cumulative_time_in_space <- function(df, graph_file) {
   df <- df |>
     dplyr::arrange(date) |>
@@ -1041,10 +1035,8 @@ graph_file  <- "./cumulative_eva_graph.png"
 #'   to contain a JSON array of objects, e.g. `[{"eva":"1", ...}, {"eva":"2", ...}]`.
 #' @return A tibble with one row per JSON record and one column per field.
 #' @examples
-#' \dontrun{
 #' eva_tbl <- read_json_to_dataframe("./eva-data.json")
 #' dplyr::glimpse(eva_tbl)
-#' }
 read_json_to_dataframe <- function(input_file) {
   jsonlite::fromJSON(input_file) |>
     tibble::as_tibble()
@@ -1064,10 +1056,8 @@ read_json_to_dataframe <- function(input_file) {
 #'   for piping into downstream steps.
 #'
 #' @examples
-#' \dontrun{
 #' eva_tbl <- read_json_to_dataframe("./eva-data.json")
 #' eva_tbl <- write_dataframe_to_csv(eva_tbl, "./eva-data.csv")
-#' }
 write_dataframe_to_csv <- function(df, output_file) {
   df <- df |>
     dplyr::mutate(
@@ -1094,11 +1084,9 @@ write_dataframe_to_csv <- function(df, output_file) {
 #' @return Invisibly returns the ggplot object.
 #'
 #' @examples
-#' \dontrun{
 #' eva_tbl <- read_json_to_dataframe("./eva-data.json") |>
 #'   write_dataframe_to_csv("./eva-data.csv")
 #' plot_cumulative_time_in_space(eva_tbl, "./cumulative_eva_graph.png")
-#' }
 plot_cumulative_time_in_space <- function(df, graph_file) {
   df <- df |>
     dplyr::arrange(date) |>
