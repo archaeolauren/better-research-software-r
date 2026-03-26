@@ -514,7 +514,6 @@ We have committed the code and the environment changes together since they are r
 
 Commenting is a very useful practice to help convey the context of the code. It can be helpful as a reminder for your future self or your collaborators as to why code is written in a certain way, how it is achieving a specific task, or the real-world implications of your code.
 
-R’s comment syntax is simple and familiar if you’ve used Python or shell scripting: a # starts a comment that runs to the end of the line, and there’s no distinct multi-line comment token in the base language—multi-line commentary is just multiple # lines. That contrasts with languages like C, C++, Java, and JavaScript, which typically have both // for single-line comments and /* … */ for block comments, and with SQL, which often supports -- and /* … */. Python is closest to R in practice (# for line comments), but Python also has the convention of triple-quoted strings used as docstrings, which can function like structured, extractable documentation; R’s comparable “docstring” mechanism is usually done via `roxygen2` comments (#' ...) in packages rather than a core language feature.
 
 From the official [R documentation](https://cran.r-project.org/doc/manuals/r-patched/R-lang.html?utm_source=chatgpt.com#Comments-1): 
 
