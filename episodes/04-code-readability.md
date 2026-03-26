@@ -913,6 +913,12 @@ read_json_to_dataframe <- function(input_file) {
 
 ```
 
+:::::: callout
+
+In RStudio, you can add `roxygen2` documentation blocks quickly using built-in helpers. After installing and loading `roxygen2`, place your cursor inside (or immediately above) a function and use Code → Insert Roxygen Skeleton to generate a template comment block with #' lines and common tags like @param and @return. RStudio will pre-populate the parameter list based on the function signature, so you can focus on filling in descriptions and examples. Many people also bind a keyboard shortcut to “Insert Roxygen Skeleton” so documenting functions becomes part of the normal edit cycle, and then run Document (commonly via devtools) to regenerate the help files when working in a package.
+
+::::::
+
 :::::: challenge
 
 ### Writing `roxygen2` comments (5 min)
@@ -1131,13 +1137,17 @@ Do not forget to commit any uncommitted changes you may have and then push your 
  $ git push origin main
 ```
 
+
+
+
+
 ## Summary
 
 Good code readability brings many benefits to software development. It makes code easier to understand, maintain, and debug—helping collaborators and future developers as well as the original author. Readable code reduces the risk of errors, speeds up onboarding for new team members, and simplifies code reviews. It also supports long-term sustainability: clear code is easier to extend, adapt, and refactor over time.
 
 Integrated development environments (IDEs) can further improve readability by surfacing issues early through built-in or integrated static analysis tools (linters). Linters flag common problems and style violations as you write code, which helps you address issues immediately rather than discovering them later in the development cycle.
 
-Case in point, in RStudio, you can add `roxygen2` documentation blocks quickly using built-in helpers. After installing and loading `roxygen2`, place your cursor inside (or immediately above) a function and use Code → Insert Roxygen Skeleton to generate a template comment block with #' lines and common tags like @param and @return. RStudio will pre-populate the parameter list based on the function signature, so you can focus on filling in descriptions and examples. Many people also bind a keyboard shortcut to “Insert Roxygen Skeleton” so documenting functions becomes part of the normal edit cycle, and then run Document (commonly via devtools) to regenerate the help files when working in a package.
+Comments are really important. Roxygen2 can help you insert comment in a structed way that later be used to automate documentation. 
 
 :::::: spoiler
 
