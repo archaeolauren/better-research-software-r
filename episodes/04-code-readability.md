@@ -579,7 +579,7 @@ print(p)
  $ renv::status() 
 
 ```{console}
-(venv_spacewalks) $ renv::status() 
+> renv::status() 
 ```
 
  $ git add eva_data_analysis.R renv.lock
