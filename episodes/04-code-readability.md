@@ -652,8 +652,7 @@ Commit changes:
 
 Functions are a fundamental concept in writing software and are one of the core ways you can organize your code to improve its readability. A function is an isolated section of code that performs a single, *specific* task that can be simple or complex.
 
-A function can then be called multiple times with different inputs throughout a codebase, but its definition only needs to 
-appear once. Breaking up code into functions in this manner benefits readability since the smaller sections are easier to read 
+A function can then be called multiple times with different inputs throughout a codebase, but its definition only needs to appear once. Breaking up code into functions in this manner benefits readability since the smaller sections are easier to read 
 and understand.
 
 Because functions are reusable, they naturally encourage the [Don’t Repeat Yourself (DRY) principle](https://glosario.carpentries.org/en/#dry): instead of copying the same logic throughout a codebase, you define it once and call it as needed. This keeps software from becoming unnecessarily long and confusing. It also improves maintainability—when the behavior in a function needs to change, you update it in one place rather than chasing down multiple copies.
@@ -826,6 +825,9 @@ plot_cumulative_time_in_space <- function(df, graph_file) {
   print(p)
 
   invisible(p)
+  # Return p silently: print(p) above already rendered the plot,
+  # so invisible() prevents a second auto-print at the top level
+  # while still allowing callers to capture the plot object if needed
 }
 
 # --- Main (now simplified) ---
@@ -843,11 +845,17 @@ plot_cumulative_time_in_space(eva_tbl, graph_file)
 
 Now that we’ve written a few functions, it’s time to document them so we can quickly remember what they do. That way, someone reading this code later can understand the intent without having to reverse-engineer the implementation.
 
-In scripts, the usual approach is to write clear comments directly above a function. In packages, the standard is to use [`roxygen2`](https://`roxygen2`.r-lib.org/): a structured comment block (lines starting with #') that describes what the function does, what inputs it expects, what it returns, and any important edge cases.
+In scripts, the usual approach is to write clear comments directly above a function. For R packages, the standard is to use [`roxygen2`](https://`roxygen2`.r-lib.org/): a structured comment block, also known as a Roxygen skeleton, is composed of lines starting with #'. This comment block describes what the function does, what inputs it expects, what it returns, and any important edge cases.
 
 Good function documentation improves readability by making the purpose of the code explicit. It also makes functions easier to reuse: when the documentation clearly spells out inputs and outputs, you can call the function elsewhere with confidence—without re-reading the whole body to figure out what it needs and what it produces.
 
-With `roxygen2`, the documentation is written immediately above the function definition using #' comments, and tooling can turn that into the help text you see via ?function_name when you’re working in a package. That said, you can still use roxygen-style comments even if you’re not building a formal package. In a regular project, this looks like adopting #' blocks as a consistent convention in your .R scripts (or in a dedicated R/ folder), using tags like @param, @return, and @examples to standardize what you record. You won’t automatically get ?my_function help pages unless you generate Rd files as part of a package build, but you still gain a structured, readable, and machine-friendly format that’s easy to search and maintain—and if the project ever does become a package, most of the documentation work is already done. We will learn to make the Rd files later but go ahead and start adding comments now.
+With `roxygen2`, documentation is written immediately above the function definition using` #'` comments. Structured tags such as `@param`, `@return`, and `@examples` are what give the comment block its meaning — `@param` documents each function argument, `@return` describes what the function gives back, and `@examples` provides runnable usage examples. Tooling can turn these structured comments into the help text you see via `?function_name`.
+
+When building a formal R package, `roxygen2` processes these `#'` blocks and auto-generates `.Rd` files — R's native documentation format, stored in the `man/` directory of a package. These `.Rd` files are what power the built-in help system: `?`, `help()`, and the RStudio help pane all read from them.
+
+That said, you can still use roxygen-style comments even if you're not building a formal package. In a regular project, this means adopting` #'` blocks as a consistent convention in your .R scripts, using the same tags (`@param`, `@return`, `@examples`) to standardize what you record. You won't automatically get `?my_function` help pages without a package build, but you still gain a structured, readable, and machine-friendly format that's easy to search and maintain — and if the project ever does become a package, most of the documentation work is already done.
+
+We will learn to generate the `.Rd` files later, but go ahead and start adding comments now.
 
 ### Example of a single-line comment
 
