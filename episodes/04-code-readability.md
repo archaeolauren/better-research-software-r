@@ -299,9 +299,9 @@ xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 c. Let's commit our latest changes:
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.R
-(venv_spacewalks) $ git commit -m "Use descriptive variable names"
-(venv_spacewalks) $ git push origin main
+ $ git add eva_data_analysis.R
+ $ git commit -m "Use descriptive variable names"
+ $ git push origin main
 ```
 
 :::
