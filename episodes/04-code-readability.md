@@ -882,7 +882,7 @@ Some projects may have their own guidelines on how to write `roxygen2` comments,
 for code style.
 
 As your code grows and becomes more complex, the `roxygen2` comments can form the content of a reference guide allowing developers to quickly look up how to use the APIs, functions, and classes defined in your codebase.
-In R, it’s common to use tooling that extracts function documentation from your source and publishes it as a browsable website, so people can learn how to use your code without cloning the repo or reading the raw files. For package-style documentation written with `roxygen2`, a typical workflow is to generate reference pages from your #' comments and build a site with pkgdown, which produces a documentation website from your package and its help files.
+In R, it’s common to use tooling that extracts function documentation from your source and publishes it as a browsable website, so people can learn how to use your code without cloning the repo or reading the raw files. For package-style documentation written with `roxygen2`, a typical workflow is to generate reference pages from your #' comments and build a site with pkgdown, which produces a documentation website from your package and its help files. We will do this in a later episode that focuses on documentation.
 
 Let's write `roxygen2` comments for the function `read_json_to_dataframe` we introduced in the previous exercise. Remember, questions we want to answer when writing the `roxygen2` comments include:
 
