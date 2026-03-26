@@ -440,8 +440,7 @@ First, we need to install the `tidyverse` as a dependency into our virtual envir
 
 ```r
 renv::install("tidyverse")
-#run this once to download tidyverse locally and add it to the lockfile 
-library(tidyverse) #run this every time you start a session 
+renv::snapshot()
 ```
 
 Then we will edit the code to use `tibble`. For the sake of time in the workshop, we will give you the updated code. The code should now look like:
