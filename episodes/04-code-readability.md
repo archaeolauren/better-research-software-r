@@ -157,6 +157,7 @@ Let's make sure we commit our changes.
  $ git add eva_data_analysis.R
  $ git commit -m "Move library calls to the top of the script"
 Some highlights:
+Some highlights:
 - Only alphanumeric characters, dot, and underscores are permitted in variable names.  
 - Must start with a letter or a dot (.); if it starts with a dot, the next character cannot be a digit.
 - After the first character, you can use letters, digits, dots, and underscores.  
@@ -426,87 +427,6 @@ The IDE understands the underlying structure of the code, which makes these comp
 ::::::::::::::::::::::::::::::::::::::::
 
 
-
-:::::::::::::::::::::::::::::::: callout
-### How to install lintr and styler for RStudio
-
-1) Install the packages
-
-```r
-install.packages(c("lintr", "styler"))
-```
-
-2) Use lintr in RStudio (see issues in the Markers pane)
-
-Enable R diagnostics in RStudio
-
-RStudio can show lintr results in the Markers pane when diagnostics are enabled.
-  - Tools → Global Options… → Code → Diagnostics
-  - Check “Show diagnostics for R”
-
-Lint a file (results appear in Markers)
-
-From the Console:
-
-```r
-lintr::lint("path/to/file.R")
-```
-Then open Markers (in the pane that also shows Build/Git/etc.) to review findings
-
-Use the RStudio Addins
-
-lintr ships RStudio addins for linting the current source and the package. You can run them via:
-  - Tools → Addins → Browse Addins… → search "lintr"
-	-	Optional: bind keyboard shortcuts via Tools → Addins → Browse Addins → Keyboard Shortcuts (the lintr docs even suggest common bindings).
-
-3) Use styler in RStudio (auto-format code)
-
-RStudio Addins
-
-styler provides RStudio addins to:
-	-	style the active file
-	-	style the current package
-	-	style the highlighted selection  
-
-Find them at:
-	-	Tools → Addins → Browse Addins… → search “styler”
-
-
-A practical “RStudio workflow”
-	1.	Write code
-	2.	Run styler addin (format)
-	3.	Run lintr addin (lint) and fix anything meaningful
-	
-A minimal .lintr config file 
-
-```
-linters: lintr::linters_with_defaults(
-  # Keep the signal high; tune to taste.
-  line_length_linter = lintr::line_length_linter(100),
-
-  # Common readability/style checks that work well in both .R and R chunks in .qmd/.Rmd
-  object_name_linter = lintr::object_name_linter(),
-  spaces_left_parentheses_linter = lintr::spaces_left_parentheses_linter(),
-  spaces_inside_linter = lintr::spaces_inside_linter(),
-  trailing_whitespace_linter = lintr::trailing_whitespace_linter(),
-
-  # Catch likely mistakes without being too noisy
-  unused_import_linter = lintr::unused_import_linter()
-)
-
-# Exclude rendered/output directories typical of Quarto projects
-exclusions: list(
-  "_site/",
-  "_book/",
-  "_freeze/",
-  "docs/",
-  "site_libs/",
-  "renv/"
-)
-```
-
-## Use existing packages from known developers
-::::::::::::::::::::::::::::::::::::::::
 
 ## Use existing packages from known developers
 
