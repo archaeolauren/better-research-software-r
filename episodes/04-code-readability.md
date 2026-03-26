@@ -221,16 +221,19 @@ Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
 
 ::::::::::::::::::::::::
 Rename these too. 
-Hint: variables `w`, `t`, `tt` and `ttt` could also be renamed to be more descriptive.
-  - **Change `w` to `csv_writer`**: makes it clear this variable is a CSV writer object. Using "w" alone would more likely be interpreted as "width" or "weight".
-Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `t`, `tt` and `ttt` to be more descriptive. 
+:::::::::::::::::: hint
+
+Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
+  - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
   - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
   - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
+
+::::::::::::::::::::::::
 c. Commit your changes to your repository. Remember to use an informative commit message.
 
 
 
-Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `w`, `t`, `tt` and `ttt` to be more descriptive. 
+Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `t`, `tt` and `ttt` to be more descriptive. 
       
       
 ```r
@@ -425,7 +428,7 @@ The IDE understands the underlying structure of the code, which makes these comp
 
 
 :::::::::::::::::::::::::::::::: callout
-How to install lintr and styler for RStudio
+### How to install lintr and styler for RStudio
 
 1) Install the packages
 
@@ -510,9 +513,10 @@ exclusions: list(
 Our script currently reads the data line-by-line from the JSON data file and uses custom code to manipulate the data. Variables of interest are stored in lists but there are more suitable data structures (e.g. dataframes or tibbles) to store data in our case.
 
 
-By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone. The main functionality of our code can be rewritten as follows using data frames from base R or tibbles from the `tidyverse` package to load and manipulate the data in data frames.  
+By choosing custom code over popular and well-tested libraries, we are making our code less readable and understandable and more error-prone. The main functionality of our code can be rewritten as follows using data frames from base R or tibbles from the `tidyverse` package to load and manipulate the data in data frames.
+We will also edit our code to use `ggplot2` for plotting so that it consistently uses the `tidyverse`.
 
-First, we need to install this dependency into our virtual environment.
+First, we need to install the `tidyverse` as a dependency into our virtual environment.
 
 ```r
 renv::install("tidyverse")
@@ -576,15 +580,10 @@ print(p)
 
 ```
 
- $ renv::status() 
 
-```{console}
 > renv::status() 
 ```
 
- $ git add eva_data_analysis.R renv.lock
- $ git commit -m "Refactor code and add tidyverse to lockfile"
- $ git push origin main
  $ git add eva_data_analysis.R renv.lock
  $ git commit -m "Refactor code and add tidyverse to lockfile"
  $ git push origin main
@@ -616,7 +615,7 @@ x <- 5  # In R, "inline comments"" begin with the `#` symbol and at least one sp
 y <- x + 10
 z <- y*2 + x
 
-# This is a multiline comment in Python.
+# This is a multiline comment in R.
 # In reality, it's just a group of one-line comments
 # together  
 ```
@@ -679,7 +678,7 @@ graph_file  <- "./cumulative_eva_graph.png"
 eva_tbl <- jsonlite::fromJSON(input_file) |>
   as_tibble()
 
-# 2) Convert types + drop missing duration/date (pandas dropna subset=['duration','date'])
+# 2) Convert types + drop missing duration/date
 eva_tbl <- eva_tbl |>
   mutate(
     eva  = as.numeric(eva),
@@ -719,14 +718,13 @@ print(p)
 
 ```
 
-Note that we have also added some useful print statements, to let us know what stage the analysis is in.
 
 Commit changes:
 
 ```bash
-(venv_spacewalks) $ git add eva_data_analysis.R
-(venv_spacewalks) $ git commit -m "Add comments to the code"
-(venv_spacewalks) $ git push origin main
+ $ git add eva_data_analysis.R
+ $ git commit -m "Add comments to the code"
+ $ git push origin main
 ```
 
 :::
@@ -927,13 +925,13 @@ plot_cumulative_time_in_space(eva_tbl, graph_file)
 
 Now that we’ve written a few functions, it’s time to document them so we can quickly remember what they do. That way, someone reading this code later can understand the intent without having to reverse-engineer the implementation.
 
-In R, there isn’t a built-in “docstring” feature in the same way Python has. In scripts, the usual approach is to write clear comments directly above a function. In packages, the standard is to use [`roxygen2`](https://`roxygen2`.r-lib.org/): a structured comment block (lines starting with #') that describes what the function does, what inputs it expects, what it returns, and any important edge cases.
+In scripts, the usual approach is to write clear comments directly above a function. In packages, the standard is to use [`roxygen2`](https://`roxygen2`.r-lib.org/): a structured comment block (lines starting with #') that describes what the function does, what inputs it expects, what it returns, and any important edge cases.
 
 Good function documentation improves readability by making the purpose of the code explicit. It also makes functions easier to reuse: when the documentation clearly spells out inputs and outputs, you can call the function elsewhere with confidence—without re-reading the whole body to figure out what it needs and what it produces.
 
 With `roxygen2`, the documentation is written immediately above the function definition using #' comments, and tooling can turn that into the help text you see via ?function_name when you’re working in a package. That said, you can still use roxygen-style comments even if you’re not building a formal package. In a regular project, this looks like adopting #' blocks as a consistent “docstring convention” in your .R scripts (or in a dedicated R/ folder), using tags like @param, @return, and @examples to standardize what you record. You won’t automatically get ?my_function help pages unless you generate Rd files as part of a package build, but you still gain a structured, readable, and machine-friendly format that’s easy to search and maintain—and if the project ever does become a package, most of the documentation work is already done.
 
-### Example of a single-line docstring
+### Example of a single-line comment
 
 ```r
 
@@ -944,7 +942,7 @@ add <- function(x, y) {
 
 ```
 
-### Example of a multi-line docstring
+### Example of a multi-line `roxygen2` comment
 
 ```r
 
@@ -1222,7 +1220,9 @@ Do not forget to commit any uncommitted changes you may have and then push your 
 ```bash
 (venv_spacewalks) $ git add <your_changed_files>
 (venv_spacewalks) $ git commit -m "Your commit message"
-(venv_spacewalks) $ git push origin main
+ $ git add <your_changed_files>
+ $ git commit -m "Your commit message"
+ $ git push origin main
 ```
 
 ## Summary
