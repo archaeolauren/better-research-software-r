@@ -656,7 +656,7 @@ A function can then be called multiple times with different inputs throughout a 
 appear once. Breaking up code into functions in this manner benefits readability since the smaller sections are easier to read 
 and understand.
 
-Because functions are reusable, they naturally encourage the [Don’t Repeat Yourself (DRY) principle](https://adv-r.had.co.nz/Functional-programming.html?utm_source=chatgpt.com): instead of copying the same logic throughout a codebase, you define it once and call it as needed. This keeps software from becoming unnecessarily long and confusing. It also improves maintainability—when the behavior in a function needs to change, you update it in one place rather than chasing down multiple copies.
+Because functions are reusable, they naturally encourage the [Don’t Repeat Yourself (DRY) principle](https://glosario.carpentries.org/en/#dry): instead of copying the same logic throughout a codebase, you define it once and call it as needed. This keeps software from becoming unnecessarily long and confusing. It also improves maintainability—when the behavior in a function needs to change, you update it in one place rather than chasing down multiple copies.
 
 As we will learn in a future episode, testing code also becomes simpler when code is written in functions. Each function can be individually checked to ensure it is doing what is intended, which improves confidence in the software as a whole.
 
