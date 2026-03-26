@@ -522,7 +522,7 @@ From the official [R documentation](https://cran.r-project.org/doc/manuals/r-pat
 > x <- 1  # This is a comment...
 > y <- "  #... but this is not."
 
-The [Tidyverse Style] Guide(https://style.tidyverse.org/functions.html#comments): 
+The [Tidyverse Style Guide](https://style.tidyverse.org/functions.html#comments): 
 
 > In code, use comments to explain the “why” not the “what” or “how”. Each line of a comment should begin with the comment symbol and a single space: #.
 
