@@ -183,7 +183,7 @@ Some useful tips for naming variables:
 :::::::::::::::::::::::::::::::::
 
 This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  Though `c` in R often refers to the `c()` function which might be something to consider as well.
-:::::::::::::::::::::::::::::::::
+
 Some useful tips for naming variables:
 
 - Short words are better than single character names. For example, if we were creating a variable to store the speed to read a file, `s` (for 'speed') is not descriptive enough but `MBReadPerSecondAverageAfterLastFlushToLog` is too long to read and prone to misspellings. `ReadSpeed` (or `read_speed`) would suffice.  
@@ -232,7 +232,7 @@ Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
 ::::::::::::::::::::::::
 c. Commit your changes to your repository. Remember to use an informative commit message.
 
-
+:::::::: solution
 
 Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `t`, `tt` and `ttt` to be more descriptive. 
       
@@ -394,6 +394,10 @@ xlab = 'Year', ylab= 'Total time spent in space to date (hours)'
 
 
 ```
+
+:::::::
+:::::::::::::
+
 Commit changes:
 
 ```bash
@@ -402,13 +406,15 @@ Commit changes:
  $ git push origin main
 ```
 
+:::::::::::::::::::::::::::::::: callout
+
 A linter is a tool that automatically checks your source code for problems without running it.
 
 Linters usually produce warnings/errors with line numbers and (often) suggested fixes.
 
 For R, 	lintr, the standard R linter does static code analysis for style issues and potential problems, supports many editors (including RStudio/VS Code), and is configurable via a .lintr file. Alongside lintr, R programmers commonly use styler which auto-formats R code so you eliminate many lint issues by formatting consistently.
 
-::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::: callout
 
@@ -499,10 +505,11 @@ print(p)
 
 ```
 
-
+```r
 > renv::status() 
 ```
 
+```bash
  $ git add eva_data_analysis.R renv.lock
  $ git commit -m "Refactor code and add tidyverse to lockfile"
  $ git push origin main
@@ -518,7 +525,6 @@ Commenting is a very useful practice to help convey the context of the code. It 
 From the official [R documentation](https://cran.r-project.org/doc/manuals/r-patched/R-lang.html?utm_source=chatgpt.com#Comments-1): 
 
 > Comments in R are ignored by the parser. Any text from a # character to the end of the line is taken to be a comment, unless the # character is inside a quoted string. For example,
-
 > x <- 1  # This is a comment...
 > y <- "  #... but this is not."
 
@@ -635,7 +641,8 @@ ggsave(graph_file, plot = p, width = 9, height = 5, dpi = 300)
 print(p)
 
 ```
-
+:::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::
 
 Commit changes:
 
@@ -644,9 +651,6 @@ Commit changes:
  $ git commit -m "Add comments to the code"
  $ git push origin main
 ```
-
-:::
-:::
 
 ## Separate units of functionality
 
@@ -1138,8 +1142,6 @@ plot_cumulative_time_in_space(eva_tbl, graph_file)
 Do not forget to commit any uncommitted changes you may have and then push your work to GitHub.
 
 ```bash
-(venv_spacewalks) $ git add <your_changed_files>
-(venv_spacewalks) $ git commit -m "Your commit message"
  $ git add <your_changed_files>
  $ git commit -m "Your commit message"
  $ git push origin main
