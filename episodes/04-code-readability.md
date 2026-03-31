@@ -201,13 +201,13 @@ Let's apply this to `eva_data_analysis.R`.
 
 a. Edit the code as follows to use descriptive (and consistent) variable names:
 
-    - Change `data_f` to `input_file`
-    - Change data_t to output_file
-    - Change g_file to graph_file
+    - Change `data_f_file` to `input_file`
+    - Change `data_t_file` to `output_file`
+    - Change `g_file` to `graph_file`
     
 *Be sure to change all the occurrences of each variable name.*
 
-b. What other variable names in our code would benefit from renaming? Rename these too. Hint: variables w, t, tt and ttt could also be renamed to be more descriptive.
+b. What other variable names in our code would benefit from renaming? Rename these too. Hint: variables t, tt and ttt could also be renamed to be more descriptive.
 
 c. Commit your changes to your repository. Remember to use an informative commit message.
 
@@ -234,7 +234,7 @@ c. Commit your changes to your repository. Remember to use an informative commit
 
 :::::::: solution
 
-Updated code after renaming `data_f`, `data_t` and `g_file` as well as variables `t`, `tt` and `ttt` to be more descriptive. 
+Updated code after renaming `data_f_file`, `data_t_file` and `g_file` as well as variables `t`, `tt` and `ttt` to be more descriptive. 
       
       
 ```r
