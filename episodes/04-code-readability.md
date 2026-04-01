@@ -216,18 +216,19 @@ c. Commit your changes to your repository. Remember to use an informative commit
 :::::::::::::::::: hint
 
 Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
-  - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
-  - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
-  - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
+
+ - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
+ - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
+ - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
 
 ::::::::::::::::::::::::
 Rename these too. 
 :::::::::::::::::: hint
 
 Variables `t`, `tt` and `ttt` could also be renamed to be more descriptive.
-  - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
-  - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
-  - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
+ - **Change `t` to `duration_dt`**: a datetime object parsed from the string, indicated by "_dt".
+ - **Change `tt` to `duration_str`**: represents a string form of the duration, indicated by "_str".
+ - **Change `ttt` to `duration_hours`**: the duration converted into (decimal) hours.
 
 ::::::::::::::::::::::::
 c. Commit your changes to your repository. Remember to use an informative commit message.
