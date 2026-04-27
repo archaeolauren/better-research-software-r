@@ -1,5 +1,5 @@
 ---
-title: "Course introduction"
+title: "Course Introduction"
 teaching: 10
 exercises: 10
 ---
@@ -57,7 +57,7 @@ Review [the Reproducible Research Discussion](./reproducible-research-discussion
 
 ::::::::::::::::::::::::::::::
 
-## Practices for building better research software
+## Practices for Building Better Research Software
 
 The practices we will cover for building better research software fall into three areas.
 
@@ -92,7 +92,7 @@ Write your reflections in the shared collaborative document.
 
 ::::::::::::::::::
 
-## Our research software project
+## Our Research Software Project
 
 You are going to follow a fairly typical experience of a new researcher (e.g. a PhD student or a postdoc) joining a research group.
 You were emailed some spacewalks data and analysis code bundled in the `spacewalks.zip` archive, written by another group 
@@ -239,7 +239,7 @@ So, we cannot even run the code on our machines.
 There is also a number of issues we identified with the software project that could do with improving.
 For the rest of this course, we will work on fixing these issues and applying some good software engineering practices.
 
-## Further reading
+## Further Reading
 
 We recommend the following resources for some additional reading on reproducible research:
 
@@ -253,6 +253,6 @@ We recommend the following resources for some additional reading on reproducible
 * [Training materials on different aspects of research software engineering][intersect-rse-training] (including open source, reproducibility, research software testing, engineering, design, continuous integration, collaboration, version control, packaging,  etc.), compiled by the [INTERSECT project](https://intersect-training.org/)
 * [Curated resources][forrt-resources] by the [Framework for Open and Reproducible Research Training](https://forrt.org/) (FORRT)
 
-## Acknowledgements and references
+## Acknowledgements and References
 
 The content of this course borrows from or references [various work](learners/reference.md#litref), especially the [original version of this course with python examples][bbrs-py].
