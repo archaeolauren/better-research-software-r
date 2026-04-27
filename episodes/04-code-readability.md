@@ -179,8 +179,10 @@ Therefore we need to give them clear names, but we also want to keep them concis
 
 “There are only two hard things in Computer Science: cache invalidation and naming things.”  
 \- Phil Karlton
-Some useful tips for naming variables:
+
 :::::::::::::::::::::::::::::::::
+
+Some useful tips for naming variables:
 
 This guidance does not necessarily apply if your variable is a well-known constant in your domain - for example, *c* represents the speed of light in physics.  Though `c` in R often refers to the `c()` function which might be something to consider as well.
 
