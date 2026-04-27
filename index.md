@@ -18,7 +18,7 @@ Check out a few example [learner profiles](./profiles.html), to see if this cour
 
 Foundational knowledge of the following is **required** to be able to understand code examples used in the course:
 
-* Python used to write scientific code
+* R used to write scientific code
 * Version control with Git 
 * Working in a command line interface (shell)
 
