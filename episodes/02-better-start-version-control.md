@@ -665,11 +665,12 @@ Let's edit the file again: place `library(lubridate)` one line above `date = Dat
 Then run the code with either RStudio or `Rscript`. The code should now run its course without error.
 
 ::: instructor
+It is expected that some learners will not have `lubridate` installed here.  They will still get an error when the code is run.
+This is a good opportunity to preview and motivate that the next section will teach how to control what is installed with `renv`.
+
 Since this is an intermediate lesson, learners may already be familiar with the difference between `install.packages()` and `library()`. However, this is a good place to briefly review that distinction and ensure everyone has **lubridate** installed so they can proceed.
 
 If `library(lubridate)` throws an error, pause to help learners install it (via `install.packages("lubridate")` or the *Packages* tab). Note that installing a package will also install any required dependencies.
-
-Learners are not formally introduced to package installation until the next lesson (when using `renv`), so this should be a light review rather than a deep dive.
 :::
 
 :::::::::::::::::::::::
