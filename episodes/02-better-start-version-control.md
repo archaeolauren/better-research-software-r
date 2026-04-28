@@ -658,7 +658,7 @@ If we look 2 lines below the error line in `eva_data_analysis.R` , we can note t
 
 This is a good reminder that functions from packages must be loaded before use. A common and recommended practice is to load all required libraries at the top of a script to avoid errors and make dependencies clear. 
 
-Therefore, the solution is to move `library(lubridate)` at least above the `date=-Date()` code line. We also need to ensure that the 'lubridate' package is installed. 
+Therefore, the solution is to move `library(lubridate)` at least above the `date=-Date()` code line.
 
 Let's edit the file again: place `library(lubridate)` one line above `date = Date()`
 
