@@ -146,8 +146,7 @@ Opening the files pane in RStudio, you should see that the software project cont
 
 4. A folder called `astronaut-data-analysis-old`, which presumably contains previous versions of the analysis, acting as a backup system.
 
-5. A hidden file, `.DS_Store`. Desktop Services Store is a hidden metadata file automatically created by macOS Finder in every folder, storing user-specific view settings like icon positions, window size, and background colors, acting much like Windows' `desktop.ini`.
-This suggests that the author was using macOS operating system, but this file is not part of the project itself.
+5. A hidden file called .DS_Store. Standing for Desktop Services Store, this is a metadata file automatically created by macOS Finder, storing user-specific view settings like icon positions, window size, and background colors. The Windows equivalent is desktop.ini. This suggests that the author was using macOS operating system, but this file is not part of the project itself.
 
 
 :::::: challenge
@@ -155,14 +154,14 @@ This suggests that the author was using macOS operating system, but this file is
 ### Assess the software project (10 min)
 
 Individually inspect the code and data.
-Try and see if you can understand what the code is doing and how it is organised.
+Try to understand what the code is doing and how it is organised.
 
-In the shared document, write down anything that you think is not "quite right", not clear, is missing, or could be done better.
+In the shared document, write down anything that you think is "not quite right", unclear, missing, or non-optimized.
 
 ::: hint
 
 Below are some suggested questions to help you assess the code.
-These are not the only criteria on which you could evaluate the code and you may find other aspects to comment on.
+These are not the only criteria on which you could evaluate the code, and you may find other aspects to comment on.
 
 - If these files were emailed to you, or sent on a chat platform, or handed to you on a memory stick, how easy would it be to find them again in 6 months, or 3 years?
 - Can you understand the code? Does it make sense to you?
@@ -189,16 +188,16 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 #### File and variable naming
 
 - the data file (`data.json`) and the R script (`my code v2.R`) could have more descriptive names
-- R script (`my code v2.R`) should not contain blank spaces as it may cause problems when running the code from command line
+- R script's name (`my code v2.R`) should not contain blank spaces as it may cause problems when running the code from command line
 - variables (e.g. `t`, `tt`, `ttt`) should have more descriptive and meaningful names
 - version control is embedded in file name (`my code v2.R`) - there are better ways of keeping track of changes to code and its different versions
-- the project contains a hidden file `.DS_Store` which is local and personal config file that should not be shared and does not even make sense other than on macOS
+- the project contains a hidden file `.DS_Store` which is local and personal config file that does not need to be shared and doesn't run outside a Mac ecosystem
 
 #### Code organisation and style
 
-- fixing inconsistent use of `=` vs `<-` in the code
+- fix inconsistent use of `=` vs `<-` in the code
 - remove repeated code and use functions instead
-- import statements should be grouped at the top
+- group import statements together at the top
 - commenting and uncommenting code should not be used to direct the flow of execution / type of analysis being done
 - the code lacks comments, documentation and explanations
 - code structure could be improved to be more modular and not one monolithic piece of code - e.g. use functions for reusable units of functionality
@@ -214,7 +213,7 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 #### Documentation
 
 - there is no README documentation to orient the user
-- there is no licence information to say how the code can be reused (which then means it cannot be reused at all)
+- there is no license information to say how the code can be reused (which then means it cannot be reused at all)
 - it is not clear what software dependencies the code has
 - there are no installation instructions or instructions on how to run the code
 
@@ -222,7 +221,7 @@ This is a (non-exhaustive) list of things that could be fixed/improved with our 
 
 ::::::
 
-As you have seen from the previous exercise - there are quite a few things that can be improved with this code.
+As you have seen from the previous exercise, there are quite a few things that can be improved with this code.
 We will try to make this research software project a "bit better" for future use.
 
 ### Running the code
@@ -233,10 +232,10 @@ Open the script, `my code v2.R`,  in RStudio and run it all via source or by sel
 
 You will get an error. We get this error because the paths to the data files have been hard coded as absolute paths for the original developer's machine.
 Hard-coding paths is not very reproducible, as it means the paths need to be changed whenever the code is run on a new computer.
-We will soon fix the code to use the relative paths within the project structure and eventually we will change the code to take in arguments from the command line when it is run too.
+We will soon fix the code to use the relative paths within the project structure; eventually, we will also change the code to take in arguments from the command line when it is run.
 
-So, we cannot even run the code on our machines.
-There is also a number of issues we identified with the software project that could do with improving.
+As written, we cannot even run the code on our machines.
+There are also a number of issues we identified with the software project that could be improved.
 For the rest of this course, we will work on fixing these issues and applying some good software engineering practices.
 
 ## Further Reading
