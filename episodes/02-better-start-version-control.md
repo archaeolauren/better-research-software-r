@@ -137,7 +137,7 @@ and the most common commands used to work with one.
   you can run the command `git status`.
   The staging area lets you bundle together groups of changes to save to your repository.
 - **Local repository** - stored within the `.git` directory of your project locally,
-  this is where Git wraps together all your changes from the staging area and puts them using the `git commit` command.
+  this is where Git wraps together all your changes from the staging area when you use the `git commit` command.
   Each commit is a new, permanent snapshot (checkpoint, record) of your project in time, which you can share or revert to.
 - **Remote repository** - this is a version of your project that is hosted somewhere on the Internet (e.g., on GitHub, GitLab or somewhere else).
   While your project is nicely version-controlled in your local repository,
@@ -163,9 +163,9 @@ and make sure that Windows users are not accidentally using PowerShell.
 
 :::
 
-Before we start, if you forgot to do it during setup,
-tell Git to use `main` as the default branch.
-More modern versions of Git use `main`, but older ones still use `master` as their main branch.
+Before we start, if you didn't do it during setup,
+tell Git to use `main` as the name of the default branch.
+Recent versions of Git use `main`, but older ones still use the term `master`.
 They work the same, but we want to keep things consistent for clarity.
 
 ```bash
@@ -178,7 +178,7 @@ We want to tell Git to make `spacewalks` a repository -- a directory where Git c
 ```bash
 $ git init
 ```
-This repository just created is "hidden" as it starts with a dot. We can find its name with the same list command used previously:
+This repository just created starts with a dot, marking it as a 'hidden' file. We can find its name with the same list command used previously:
 
 ```bash
 $ ls -laF
@@ -190,7 +190,7 @@ A new line will be visible in the output:
 drwxr-xr-x    9 username  staff     288 Oct 30 18:21 .git/
 ```
 
-We can see that its name is **`.git`** and the trailing slash confirms that it is a directory into which the Git software will write.
+We can see that its name is **`.git`**, and the trailing slash confirms that it is a directory into which the Git software will write.
 
 We can check everything is set up correctly by asking Git to tell us the status of our project:
 
@@ -208,37 +208,32 @@ Untracked files:
   
 	.Rproj.user/
 	astronaut-data-analysis-old/
-  data.json
+        data.json
 	my code v2.R
 	spacewalks.Rproj
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-This tells us that Git has noticed two files in our directory, but unlike Dropbox or OneDrive, it does not *automatically* track them. We need to tell Git explicitly which files we want it to track.
-This is not a handicap, but rather helpful, since scientific code can have vast inputs or outputs we might not want Git to track and store (GBs to TBs of space telescope data) or require sensitive information we cannot share (for example, medical records).
-This is not a problem, but rather a helpful feature, since scientific code can have vast inputs or outputs we might not want Git to track and store (GBs to TBs of space telescope data) or require sensitive information we cannot share (for example, medical records).
-Before we commit this initial version, we should try to run it. This is often the first thing you might do upon receiving someone's code.
+This tells us that Git has noticed the files in our directory, but unlike Dropbox or OneDrive, it does not *automatically* track them. We need to tell Git explicitly which files we want it to track.
+While it might seem inconvenient, this is actually a helpful feature, since scientific research can include large or sensitive datasets that we may not want to track or share (e.g., terabytes of space telescope data, or patient medical records).
+Before we commit our current project, we should try to run the code. This is often the first thing you might do upon receiving someone else's work.
 
 There are multiple ways to run R code:
 
 Option 1: within R console
 
-- Click once on the file `my code v2.R` within the Files Tab. This will open the file in the top left quadrant.
-- Then click on the **"Source"** icon located at the top right of the opened file. Note, there are two options - "Source", which is equivalent to running `source('my code v2.R')` and "Source with Echo", which is equivalent to running the script line by line. Be aware, if you have objects in your environment, this may effect how your script runs.
+- Click once on the file `my code v2.R` within the Files tab. This will open the code file.
+- Then click on the **"Source"** icon located at the top right of the opened file. Note, if you choose the carat next to **"Source"** there are two options - "Source", which is equivalent to running `source('my code v2.R')` and "Source with Echo", which is equivalent to running the script line by line. Be aware, if you have objects in your environment, this may effect how your script runs.
 
 Option 2: from the Terminal tab
 
-- An R script can be run within the shell with command **`Rscript`** which is part of any R installation.
-- The command is all uppercase and blank spaces in the file name have to be escaped by a backslash as shown:
+- An R script can be run within the shell with command **`Rscript`**, which is part of any R installation.
+- Blank spaces in the file name have to be marked by a backslash:
 
 ```bash
 $ Rscript my\ code\ v2.R 
 ```
-Option 2: from the Shell window
-
-- An R script can be run within the shell with command **`Rscript`** plus the path to the R file we want to run. which is part of any R installation. For example:
-
 
 ```output
 Error in open.connection(con, "rb") : cannot open the connection
