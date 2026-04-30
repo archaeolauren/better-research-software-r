@@ -7,7 +7,7 @@ exercises: 30
 :::::::::::::::::::::::::::::::::::::: questions
 
 - What is a version control system?
-- Why is version control essential to building good software
+- Why is version control essential to building good software?
 - What does a standard version control workflow look like?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
@@ -20,28 +20,28 @@ exercises: 30
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-In this episode, we will set up our new research software project using some good practices from the start. 
-This will lay the foundation for long-term sustainability of our code, collaboration, and reproducibility. 
+Next, we will set up our new research software project using some good practices from the start. 
+This will lay the foundation for long-term project sustainability, collaboration, and reproducibility. 
 
-This starts with following naming conventions for files, employing version control, and (in the next episode) 
-setting up a virtual development environment with software dependencies to ensure the project can be more easily and 
-reliably run, shared and maintained. Next (over the rest of the course) - adding tests, setting up automation (e.g. continuous integration), 
-documenting software and including metadata such as licensing, authorship and citation will ensure the results our software 
-produces can be trusted and others can build upon it with confidence.
+In this episode we will cover file naming conventions and version control. In the following episode we will 
+set up a virtual development environment with software dependencies to ensure the project can more easily and 
+reliably be run, shared and maintained. The rest of the course will cover adding tests; setting up automation (e.g. continuous integration); 
+documenting software; and including licensing, authorship and citation metadata.
 
 Let's begin by creating a new software project from our existing code,
 and start tracking changes to it with version control.
 
 ## From Script to Software Project
 
-In the previous episode you have unzipped `spacewalks.zip` into a directory `spacewalks` in your home directory.
+In the previous episode you unzipper `spacewalks.zip` into a directory `spacewalks` within your home directory.
 
-Within the RStudio the files contained within `spacewalks` should appear within the **`Files`** Tab located in the bottom-right pane by default.
+In RStudio, the files contained in `spacewalks` should appear in the **Files** tab, located by default in the bottom-right pane.
 
-You can also access files and work within a unix shell Terminal in the terminal tab (Windows users need to make sure that the terminal is "GitBash"; not "PowerShell" or "cmd"). 
-If your terminal tab does not appear to be GitBash, please refer to the [installation instructions](https://carpentries-incubator.github.io/better-research-software-r/installation-instructions.html)
+You can also access files and work within a unix shell Terminal in the terminal tab.
+Windows users need to make sure that the terminal is "GitBash", not "PowerShell" or "cmd". You can run the command echo $0 in the terminal to get the name of the currently running shell; check and set the default shell by going to **Tools -> Global Options -> Terminal**. 
+If your terminal tab does not appear to be GitBash, please refer to the [installation instructions](https://carpentries-incubator.github.io/better-research-software-r/installation-instructions.html).
 
-Within the terminal tab, if you are not already inside the `spacewalks` directory, you can navigate into it and list its contents. The symbol **`~`** reprensents your user's home directory, and the **`-F`** flag places a forward slash **`/`** if the item listed is a directory. The **`-a`** flag will request to show all files, including hidden files with a name starting with a dot. 
+Within the terminal tab, if you are not already inside the `spacewalks` directory, you can navigate into it and list its contents. The symbol **`~`** reprensents your user's home directory, and the **`-F`** flag places a forward slash **`/`** if the item listed is a directory. The **`-a`** flag will request to show all files, including hidden files (which often have names starting with a dot). 
 
 ```bash
 cd ~/spacewalks
@@ -61,21 +61,20 @@ drwxr-xr-x@   4 username  staff     128 Oct 14 10:06 astronaut-data-analysis-old
 
 (Note: The **`@`** sign within the first column is only shown for macOS users. This is a special macOS code signifying that extended attributes exist, which can be seen with `attr filename`.)
 
-The directory `.Rproj.user/` was created by RStudio when the project was created in the previous section. Its presence is revealed by the `-a` option to show hidden files. 
-In some cases some other files may appear depending on your OS or other factors: 
-a file named `.DS_Store` might be seen by Mac users and can be ignored for the moment and a file named `.Rhistory` might appear as well and can be ignored for now.
+The directory `.Rproj.user/` was created by RStudio when we created the project in the previous episode. It is visible here because we include the `-a` option, which shows hidden files. 
+In some cases some other files may appear, depending on your OS or other factors: These include `.DS_Store` (discussed in the previous episode), and file named `.Rhistory`. Both can be ignored for now.
 
-Over the rest of the course, we will transform a collection of these files into a well-structured software project that follows established good practices in research software engineering.
+Over the rest of the course, we will transform this collection of files into a well-structured software project that follows established good practices in research software engineering.
 
-The first thing you may notice that our software project contains folder `astronaut-data-analysis-old` which presumably tries to keep track of older versions of the code. There is a better way to do that using version control tool, such as Git, and we can delete this folder but will wait until after we set up our version control with git.
-This way we can keep that version in our history and can delete it so it isn't currently in our folder.
+Our software project currently contains the folder `astronaut-data-analysis-old`, which presumably tries to keep track of older versions of the code. There is a better way to do that using version control tools, such as Git.
+Once we've set up version control, we'll be able to delete this directory.
 
 ## Version Control
 
-Before we do any further changes to our software, we want to make sure we can keep a history of what changes we have done since we inherited the code from our colleague.
+Before we make changes to our software, we want to make sure we can keep a history of those changes.
 
-We can track changes with version control. Later on, we will store those changes on a remote server too --
-both for safe-keeping and to make those changes easier to share with others. In later episodes, we will also see how version control makes it easier for multiple collaborators to work together on the same project at the same time and combine their contributions.
+We can track changes with version control. Later on, we'll learn how to store those changes on a remote server --
+a beneficial feature both for safe-keeping and for sharing with others. Version control also helps to seamlessly combine contributions made by multiple users.
 
 :::::: callout
 
@@ -83,7 +82,7 @@ both for safe-keeping and to make those changes easier to share with others. In 
 
 #### What is a version control system?
 
-Version control systems are tools that let you track changes in files over time in a special database that allows 
+Version control systems are tools that let you track changes in files in a special database that allows 
 users to "travel through time", and compare earlier versions of the files with the current state.
 Think of a version control system like turning on 'Track Changes' on Microsoft Word/Google Docs,
 but for *any* files you want, and a lot more powerful and flexible.
@@ -94,13 +93,13 @@ As scientists, our main motivation for using version control is **reproducibilit
 By tracking and storing every change we make,
 we can restore our project to the state it was at any point in time.
 This is incredibly useful for reproducing results from a specific version of the code,
-or tracking down which changes we (or others) made introduced bugs or changed our results.
+or tracking down changes which introduced bugs or altered our results.
 
 The other benefit of version control is it provides us with a **history** of our development.
 As we make each change, we record what it was, and why we made it.
 This helps make our development process transparent and auditable -- which is a good scientific practice.
 
-It also makes our project more **sustainable** - as our data, software and methods (knowledge) remain usable and
+It also makes our project more **sustainable**, as our data, software and methods (knowledge) remain usable and
 accessible over time (especially if made available in shared version controlled code repositories), even after the original funding ends or team members move on.
 
 ::::::
@@ -108,19 +107,19 @@ accessible over time (especially if made available in shared version controlled 
 ### Git version control system
 
 **Git** is the most popular version control system used by researchers worldwide, and the one we'll be using.
-Git is used mostly for managing code when developing software, but it can track *any* files --
-and is particularly effective with text-based files (e.g. source code like `.py`, `.c`, `.r`, but also `.csv`, `.tex` and more).
+Git is used mostly for managing code when developing software,
+and is particularly effective with text-based files (source code like `.py`, `.c`, `.r`, but also `.csv`, `.tex` and more). However, it can be used to track *any* files.
 
 Git helps multiple people work on the same project (even the same file) at the same time.
-Initially, we will use Git to start tracking changes to files on our local machines; later on we will start sharing our
-work on [GitHub](https://github.com) allowing other people to see and contribute to our work.
+Initially, we will use Git to start tracking changes to files on our local machine; later on we will start sharing our
+work on [GitHub](https://github.com), allowing other people to see and contribute to our work.
 
 :::::: callout
 
 ### Git refresher
 
 Git stores files in **repositories** - directories where changes to the files can be tracked.
-The diagram below shows the different parts of a Git repository,
+The diagram below shows the different parts of a Git repository
 and the most common commands used to work with one.
 
 ![Software development lifecycle with Git](fig/ep02_fig05-git-lifecycle.svg){alt='Software development lifecycle with Git diagram showing Git commands and flow of data between components of a Git system, including working directory, staging area, local and remote repository'}
