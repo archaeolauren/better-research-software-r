@@ -20,7 +20,7 @@ exercises: 30
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-Next, we will set up our new research software project using some good practices from the start. 
+Next, we will set up our new research software project using some good practices. 
 This will lay the foundation for long-term project sustainability, collaboration, and reproducibility. 
 
 In this episode we will cover file naming conventions and version control. In the following episode we will 
@@ -33,7 +33,7 @@ and start tracking changes to it with version control.
 
 ## From Script to Software Project
 
-In the previous episode you unzipper `spacewalks.zip` into a directory `spacewalks` within your home directory.
+In the previous episode you unzipped `spacewalks.zip` into a directory `spacewalks` within your home directory.
 
 In RStudio, the files contained in `spacewalks` should appear in the **Files** tab, located by default in the bottom-right pane.
 
@@ -100,7 +100,7 @@ As we make each change, we record what it was, and why we made it.
 This helps make our development process transparent and auditable -- which is a good scientific practice.
 
 It also makes our project more **sustainable**, as our data, software and methods (knowledge) remain usable and
-accessible over time (especially if made available in shared version controlled code repositories), even after the original funding ends or team members move on.
+accessible over time (especially if made available in shared, version controlled, code repositories), even after the original funding ends or team members move on.
 
 ::::::
 
@@ -178,7 +178,7 @@ We want to tell Git to make `spacewalks` a repository -- a directory where Git c
 ```bash
 $ git init
 ```
-This repository just created starts with a dot, marking it as a 'hidden' file. We can find its name with the same list command used previously:
+The repository just created starts with a dot, marking it as a 'hidden' file. We can find its name with the same list command used previously:
 
 ```bash
 $ ls -laF
@@ -221,12 +221,12 @@ Before we commit our current project, we should try to run the code. This is oft
 
 There are multiple ways to run R code:
 
-Option 1: within R console
+**Option 1**: within R console
 
 - Click once on the file `my code v2.R` within the Files tab. This will open the code file.
 - Then click on the **"Source"** icon located at the top right of the opened file. Note, if you choose the carat next to **"Source"** there are two options - "Source", which is equivalent to running `source('my code v2.R')` and "Source with Echo", which is equivalent to running the script line by line. Be aware, if you have objects in your environment, this may effect how your script runs.
 
-Option 2: from the Terminal tab
+**Option 2**: from the Terminal tab
 
 - An R script can be run within the shell with command **`Rscript`**, which is part of any R installation.
 - Blank spaces in the file name have to be marked by a backslash:
@@ -246,40 +246,49 @@ Execution halted
 
 We get this error because the paths to the data files have been hard coded as absolute paths for the original developer's machine.
 Hard-coding paths is not very reproducible, as it means the paths need to be changed whenever the code is run on a new computer.
-Instead, we will soon change the code to use the relative paths within the project structure and eventually we will change the code to take in arguments from the command line when it is run.
+Coming up, we will change the code to use the relative paths within the project structure, and eventually we will change the code to take in arguments from the command line when it is run.
 When we commit the files, we will note that the code is broken in our commit message.
-This is a best practice if you decide to commit broken code.
+This is a best practice when committing broken code.
 
 ### Add files into repository
 
-Befgore proceeding let's display once more the files as Git sees them:
+Before proceeding, let's take another look at the files as Git sees them:
 
 ```bash
 $ git status
 ```
 
-From this point we are going to start tracking files with Git.
 We can tell Git to track a file using `git add`. 
 
-First lets make a commit with our old analysis files and then we can delete them
+First, let's make a commit with our old analyses, so we can delete the files without losing the code.
 
 ```bash
 git add astronaut-data-analysis-old/*
 git commit -m "adding old analysis files"
 ```
+The asterisk at the end of the file path tells git to track all files within the `astronaut-data-analysis-old` directory.
 
-Then we can delete the old analysis folder.
-To delete the file on our filesystem and in the git repo at the same time we can use `git rm`
+Every commit we make needs to include a short description of the changes. The `-m` 
+option means message, and allows us to type this comment in-line. If you don't use 
+`-m`, Git will open a text editor for you to write your message. The default editor 
+depends on your operating system and settings.
+
+Good commit messages start with a brief (<50 characters) statement.
+Generally, this should complete the statement "If applied, this will will...".
+
+Now that we've save the code inside it, we can delete the old analysis folder. To 
+delete the file from our filesystem and the git repository at the same time, use `git 
+rm`.
 
 ```bash
 git rm -r astronaut-data-analysis-old/
 ```
 
-Note: we had to use the `-r` flag to delete the whole folder.
-Be careful when deleting whole folders.
-Though we can be fairly confident in this deletion since we know it is also already version controlled with git and we could get it back if needed.
+Note: we had to use the `-r` flag to delete the whole folder. Be careful when 
+deleting whole folders. We can be fairly confident in this deletion since we know it 
+is also already version controlled with git and we could get it back if needed.
 
-Let's look at what the status of the deletion is and be sure we aren't deleting any extra files.
+Let's look at the status of the deletion to be sure we aren't deleting any extra files.
 ```bash
 git status
 ```
@@ -289,31 +298,31 @@ On branch main
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
 	deleted:    astronaut-data-analysis-old/code.R
-  deleted:    astronaut-data-analysis-old/Extra-vehicular_Activity__EVA__-_US_and_Russia_20240126.csv
+        deleted:    astronaut-data-analysis-old/Extra-vehicular_Activity__EVA__-_US_and_Russia_20240126.csv
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
   
 	.Rproj.user/
-  data.json
+        data.json
 	my code v2.R
 	spacewalks.Rproj
 ```
 
-Now we will commit the deletion
+That looks good. Now we can commit the deletion:
 ```bash
 git commit -m "deleted previous analysis files"
 ```
 
-Next we can add our current workings scripts and data.
-We also add the project file `spacewalks.Rproj`.
+Next, we can add our current workings scripts and data.
+We'll also add the project file `spacewalks.Rproj`.
 
 ```bash
 $ git add my\ code\ v2.R
 $ git add data.json
 $ git add spacewalks.Rproj
 ```
-and then check the right thing happened:
+Check that this did what we intended:
 
 ```bash
 $ git status
@@ -335,16 +344,21 @@ Untracked files:
 	.Rproj.user/
 ```
 
-Git now knows that we should track the changes to files `my code v2.R` and `data.json`,
-but it has not 'committed' those changes to the record yet.
+Git now knows that we want to track changes to files `my code v2.R` and `data.json`, 
+but it has not committed those changes to the record yet.
 
-When we are sure that we want to proceed, we can *commit* the changes with a `git commit` command usually referred to as "a commit".
+When we are sure that we want to proceed, we can *commit* the changes with a `git 
+commit` command, usually referred to as "a commit".
 
-A commit is a snapshot of how your tracked files have changed at this moment in time, which is referred to as a "stage", "a moment in time."
-To create a commit that records the fact that we added two new files, we need to run one more command.
+A commit is a snapshot of how your tracked files look at this moment in time, which 
+is referred to as a "stage".
 
-The following is a multiline commit as the double quote is not closed at the end of the first line.
-As you press Enter or Return, you will see a temporary prompt: `dquote>` which simply means that more text can be entered on this and perhaps more lines until the double quote is closed on the last line.
+We will include multiple lines of text in this commit message, allowing us to include 
+details beyond the first-line, 50 character summary. By not closing the double 
+quotation marks at the end of the first line, we are telling Git that we're not done 
+typing yet. As you press Enter or Return, you will see a temporary prompt such as 
+`dquote>` or `>`, which simply means that more text can be entered. Once you've added 
+all your text, close the multiline comment by ending with double quotation marks.
 
 ```bash
 $ git commit -m "Add the initial spacewalks data and code
@@ -360,19 +374,10 @@ BREAKING CHANGE: Path to data is hard coded and needs to be fixed"
  create mode 100644 spacewalks.Rproj
 ```
 
-At this point, Git has recorded the changes for the files we asked to be tracked when we issued the command `git add`. The changes from the older to the new file versiosn are saved within the `.git/` as a *snapshot* which could be retried at a later date.
-This is called a commit (or revision).
-
-The `-m` option means message, and records a short, descriptive, and specific comment that will help us remember later on what we did and why.
-If we run `git commit` *without* `-m` ,
-Git will still expect a message -- 
-and will launch a text editor so that we can write a longer one.
-The editor will depend on settings and operating system.
-
-Remember, good commit messages start with a brief (<50 characters) statement about the changes made in the commit.
-Generally, the message should complete the sentence "If applied, this commit will...".
-If you want to go into more detail, add a blank line between the summary line and your additional notes.
-Use this additional space to explain why you made changes and/or what their impact will be.
+At this point, Git has recorded the changes for the files we asked to be tracked when 
+we issued the command `git add`. The changes from the older to the new file versiosn 
+are saved within the `.git/` as a *snapshot*, which could be retrieved at a later 
+date.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::: instructor
 
@@ -404,25 +409,37 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-You may see one or more hidden files or directries (starting with a dot) that are not tracked.
-To avoid seeing the "Untracked files" message every time we'll create a special text file called `.gitignore` to list these files. RStudio automatically creates one for you when you set up the project with git from the beginning, in which case you can see its content with command `cat .gitignore`. But let's learn how to do this now.
+You may see one or more hidden files or directries (starting with a dot) that are not 
+tracked. To avoid seeing the "Untracked files" message every time, we'll create a 
+special text file called `.gitignore` to list these files. In the future, if you 
+check the "create a git repository" option when setting up a project in RStudio, it 
+will automatically create a .gitignore for you. If when such a file does exist, we 
+can use `cat .gitignore` to view its contents.
 
-The method that does not need any special editing software is via the shell, thanks the `echo` command and the power of redirection. We can use a single ">" to create the file. Note that if the `.gitignore` file already was present, this command would erase the content of the original. For the same reason any future additions with echo need two `>>` to add (i.e. append) to the file without overwriting it.
+Since we created a git repository from an existing RProject, we will have to make our 
+own. This can easily be done by telling our Unix shell to add the name of a file (one 
+we want to ignore) to the text of a file called `.gitignore`. Seeing that no such 
+file exists, the shell will create one, then add the text we asked for. We'll use 
+`.Proj.user` as the start of our `.gitignore` list.
+
+**Important**: The `>` operator will always create a new file, **overwriting** any 
+pre-existing file with the same name. To add file names to an existing `.gitignore`, 
+you must use the `>>` (append) operator.
 
 ```bash
-$ echo ".Rproj.user" > .gitignore
+$ echo ".Rproj.user/" > .gitignore
 ```
 
 :::::::::::: spoiler
 
-### Reusing standard gitignore tempates
+### gitignore templates
 
-You might find github's collection of [gitignore templates](https://github.com/github/gitignore) helpful for common coding projects.
+You might find github's collection of [gitignore templates](https://github.com/github/gitignore) helpful. Many versions exist, built for common coding languages, environments, and project types.
 
 ::::::::::::::::::::
 
-If you issue a `git status` at this point Git will let you know that 
-wealso need to track itself:
+Even though we don't want to track the files listed in `.gitignore`, we still need to 
+track the `.gitignore` file itself:
 
 ```bash
 $ git add .gitignore
@@ -439,7 +456,7 @@ Changes to be committed:
 	new file:   .gitignore
 ```
 
-We still need to commit that change:
+To commit this change:
 
 ```bash
 git commit -m "add .gitignore"
@@ -460,57 +477,52 @@ On branch main
 nothing to commit, working tree clean
 ```
 
-This is the procedure we'll continue to follow: make changes, then`add` to move the changes to staging, then `commit` to save this version of our repo, then `status` to check everything is in the state we expect.
+This is the procedure we'll continue to follow: make changes, then`add` to move the 
+changes to staging, then `commit` to save this version of our repo, then `status` to 
+check everything is in the state we expect.
 
 :::::::::::::::::::::::::::::::::::::::::  callout
 
 ## Where are my changes?
 
-If we run `ls` at this point, we'll still only see two files
--- our script, and our dataset.
-Git saves information about our files' history in the special `.git` directory mentioned earlier.
-This both stops our folders being cluttered with old versions,
-and *also* stops us accidentally deleting them!
+If we run `ls` at this point, we'll still only see two files -- our script, and our 
+dataset. Git saves information about our files' history in the special `.git` 
+directory mentioned earlier. This both stops our folders being cluttered with old 
+versions, and *also* stops us accidentally deleting them!
 
 You can see the hidden Git directory using the `-a` flag to show all files and folders:
 
 ```bash
-$ ls -aF
+$ ls -a
 ```
-
-```output
-.
-..
-.git/
-```
-
 If you were to delete `.git`, your directory would stop being a repository,
 and it would lose all of your history of changes.
 You never need to look into `.git` yourself --
-Git adds useful commands to do that, which are covered later on.
+Git has commands to do that, which are covered later on.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### Make a change
 
-You may have noticed that the script we received contains blank spaces in its filename.
-This meant that, when we were typing the script's name into the terminal, we had to add a slash before the space like this: `my\ code\ v2.R`.
-Using a backslash in this way is called "escaping".
-It lets the terminal know to treat the space as part of the filename,
-and not split the name into separate, independent arguments.
-It is a bit inconvenient and will cause errors or problems if you forget.
-Therefore, the best practise is to completely avoid spaces in filenames as well as directories.
-The simplest fix is to replace the spaces with underscores `_` instead.
+You may have noticed that the script we received contains blank spaces in its 
+filename, and that we had to add a slash before the space when referencing that file 
+in the terminal: `my\ code\ v2.R`. Using a backslash in this way is called 
+"escaping". It lets the terminal know to treat the space as part of the filename, and 
+not split the name into separate, independent arguments. It is a bit inconvenient and 
+will cause errors or problems if you forget. Therefore, the best practise is to 
+completely avoid spaces in filenames as well as directories. The simplest fix is to 
+replace the spaces with underscores `_` instead.
 
-To change the name of the file, it is judicious to use the Git command `git mv` rather than the `mv` shell command:
+To change the name of the file, it is better to use the Git command `git mv` rather 
+than the `mv` shell command. `git mv` handles the name change directly. If we had 
+used `mv` and `git add`, git would have registered a file deletion and new file 
+creation.
+
 
 ```bash
 $ git mv my\ code\ v2.R my_code_v2.R
 ```
-
-If you run `git status` again, you'll see Git has noticed the change in the filename.
-Note, `git mv` handles the name change directly, instead of seeing a deleted file and a new file as would be the case if we'd used `mv` and then `git add`.
-It also stages the changes to be committed.
+`git mv` also stages the changes for us:
 
 ```bash
 $ git status
@@ -535,78 +547,94 @@ $ git commit -m "removed spaces from filename"
 
 ### Rename our data and output files
 
-Now that we know how to rename files in Git,
-we can use it to make our files and code a bit easier to understand.
-
-We may want to:
-
-1. Give our script and input data file more meaningful names, e.g `eva_data_analysis.R` and `eva-data.json`. This change also removes version tracking from the old script name as we are using Git for version control, and Git will keep track of that for us.
-2. Choose informative file names for our output data file (e.g. `eva-data.csv`) and plot (`cumulative_eva_graph.png`).
-3. Use relative paths (e.g. `./eva-data.json`) instead of absolute paths (e.g. `home/sarah/Projects/astronaut-analysis/data.csv`) to the files (which were hardcoded to the path on our colleagues machine and would not work on ours).
-4. Update the R script with these changes.
+Now that we know how to rename files in Git, we can use it to make both our existing 
+files and those produced by the R code easier to understand. We'll also switch the hard-codedfile paths that are currently making our code fail for relative paths.
 
 :::::::::::::::::::::::::::: challenge
 
 #### Update the filenames in the repo
 
-Try to make these changes yourself.
+Make the following changes in a way that resolves the hard coded filepath issue:
 
-1. Give our R script and input data file informative names - `eva_data_analysis.R` and `eva-data.json`, respectively.
-2. Update other file names and paths used in the script - output CSV data (`eva-data.csv` to match the new input data name) and plot(`cumulative_eva_graph.png`).
-3. Stage and commit these changes in the Git repository.
+1. Give our R script and input data file informative names: `eva_data_analysis.R` and `eva_data.json`, respectively.
+2. Open the R script, and update it to match the changes you made in Challenge #1.
+3. While in the script, update the names of the output files: a CSV (`eva_data.csv`) and a plot (`cumulative_eva_graph.png`). 
+4. Stage and commit these changes in the Git repository.
 
 :::::::::::::: solution
 
-Firstly, let's update the file names in our R script in RStudio:
+1. 
 
-```r
-data_f_file = 'eva-data.json'
-data_t_file = 'eva-data.csv'
-g_file = 'cumulative_eva_graph.png'
-```
-
-Save the file after changes are implemented.
-
-Next, we need to rename the files on the file system using Git and commit all changes. Since we used `git mv` we don't need to use `add`:
+We can use git mv in the console to rename `my data.json` and `my_code_v2.R`, just as we did above:
 
 ```bash
-git mv data.json eva-data.json
+git mv data.json eva_data.json
 git mv my_code_v2.R eva_data_analysis.R
-git status
 ```
-This will show the fact that we changed the file name and made changes in its content (i.e. the paths for files.)
+You can see the results of these changes either by running `git status`, or by checking the Files pane in RStudio. 
+
+2. 
+
+Open eva_data_analysis.R in RStudio. We can see that the paths of input (json) and output (CSV and png) are assigned in the first few lines of code:
+
+```r
+# https://data.nasa.gov/resource/eva.json (with modifications)
+data_f_file = '/home/sarah/Projects/astronaut-analysis/data.json'
+data_t_file = '/home/sarah/Projects/astronaut-analysis/data.csv'
+g_file = 'myPlot.png'
+```
+Note: At the moment, we're interested in the **file** names and paths (right side of the equals sign); we'll come back to the **variable** names (left side of the equals sign, internal to the R script) later.
+
+Since we are working in an RProject, R will by default look in the project directory (`spacewalks`) for our files. This lets us use just the file name, which will work on any computer, instead of a full, hard-coded path. Change the line assigning a value to `data_f_file` to read:
+
+```r
+data_f_file = 'eva_data.json'
+```
+3. 
+
+We had to change the input file names in **both** the project directory and the R 
+code. Since the output files are produced by the R code, we only have to change them once:
+
+```r
+data_t_file = 'eva_data_.csv'
+g_file = 'cumulative_eva_graph.csv'
+```
+
+That's all we need to do in the R script for now; you can save and close the file.
+
+4. 
+
+Use `git status` to see where we are in file tracking:
 
 ```output
+
 On branch main
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
-	renamed:    data.json -> eva-data.json
-	renamed:    my_code_v2.R -> eva_data_analysis.R
+        renamed:    data.json -> eva_data.json
+        renamed:    my code v2.R -> eva_data_analysis.R
 
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
-	modified:   eva_data_analysis.R
-```
-(Untracked files are omitted for clarity.)
+        modified:   eva_data_analysis.R
 
-Note that we modified `eva_data_analysis.R` in addition to renameing it.
-We can add those changes to the stage as well as part of this commit or commit them separately.
-In this case, we will go ahead and stage them together.
+```
+
+The `git mv` method for changing file names staged those changes for us, but we need to stage our changes to the body of the R script manually:
+
 ```bash
 git add eva_data_analysis.R
 ```
 
-
-
-Finally, we can commit our changes:
+Then we can commit all our changes at once:
 
 ```bash
-git commit -m "Implement informative file names and script editing"
+git commit -m "Implement informative file names"
 ```
 
 ```output
-[main 692b680] Implement informative file names and script editing
+[main 692b680] Implement informative file names
 2 files changed, 3 insertions(+), 3 deletions(-)
  rename data.json => eva-data.json (100%)
  rename my_code_v2.R => eva_data_analysis.R (91%)
@@ -616,10 +644,10 @@ git commit -m "Implement informative file names and script editing"
 
 ### Is the code working now?
 
-The code failed because the file name paths did not match as it was hard-coded to a specific user.
-We just updated the file name paths with the hope that the code will work as . But is it?
+The code failed because the file paths in the script were specific to the original author's computer system.
+We have updated the file paths; let's check if that was the only issue with the code.
 
-Try to run the code now as before, either with RStudio or with the `Rscript` command on the shell terminal:
+Try to run the code as before, either with RStudio or with the `Rscript` command on the shell terminal:
 
 RStudio: click the "source" button as in Option 1 above.
 
@@ -634,6 +662,10 @@ In both cases there will be another error:
 ```output
 Error in Date() : could not find function "Date"
 ```
+
+**Note:** If you don't have both `lubridate` and `jsonlite` already installed, you may get an error notifying you of the missing packages. 
+For now, go ahead and install them using either the `install.packages()` command or by selecting "install" in the alert message in the source pane. 
+We'll cover a reproducible approach to package installation in Episode 3. 
 
 :::::::::::::::::::::::::::: challenge
 
